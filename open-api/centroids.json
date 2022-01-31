@@ -1,0 +1,161 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "CentroidRestDto": {
+      "description": "Not used - Centroid data",
+      "properties": {
+        "clusterAzimuthBam": {
+          "description": "[0-65535]: azimuth of the cluster in BAMS (0 true north. value increases in clockwise direction. 32768 (65536/2) represents 180 degrees)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "clusterRangeBin": {
+          "description": "range bin of the cluster",
+          "format": "int32",
+          "type": "integer"
+        },
+        "peakAmp": {
+          "description": "[0-127]: peak amplitude of the centroid",
+          "format": "int32",
+          "type": "integer"
+        },
+        "shape": {
+          "description": "array of centroid data which forms a centroid shape",
+          "items": {
+            "$ref": "#/definitions/CentroidShapesRestDto"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "CentroidShapesRestDto": {
+      "description": "Shape of centroid given as array of entries (in clockwise direction) of azimuth and range start and stop",
+      "properties": {
+        "azimuthBams": {
+          "description": "[0-65535]: azimuth value in BAMS for given entry (0 true north. Value increases in clockwise direction. 32768 (65536/2) represents 180 degrees)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "rangeStart": {
+          "description": "start range of cluster for the given azimuthBams (in range bins)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "rangeStop": {
+          "description": "end range of cluster for the given azimuthBams (in range bins)",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "CentroidsRestDto": {
+      "description": "Container for multiple Centroid statuses",
+      "properties": {
+        "items": {
+          "description": "centroids for the requested RP",
+          "items": {
+            "$ref": "#/definitions/CentroidRestDto"
+          },
+          "type": "array"
+        },
+        "metersPerRangeBin": {
+          "description": "meters per range bin (used to convert range-bin fields (such as clusterRangeBin) to meters)",
+          "format": "float",
+          "type": "number"
+        },
+        "notHeartbeating": {
+          "description": "[0,1] this field indicates the state of the system. If 1 then indicates there is no Heartbeat and it is very unlikely to have data. If missing (or 0) then indicates there is a Heartbeat, and data is expected (if the Radar is radiating)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "numItems": {
+          "description": "number of centroids in this message",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posTime": {
+          "description": "position time in (float) epoch seconds",
+          "format": "double",
+          "type": "number"
+        },
+        "radarLat": {
+          "description": "radar latitude in decimal degrees. Centroids are relative to this location.",
+          "format": "double",
+          "type": "number"
+        },
+        "radarLon": {
+          "description": "radar longitude in decimal degrees. Centroids are relative to this location.",
+          "format": "double",
+          "type": "number"
+        },
+        "rp": {
+          "description": "[1-64]: the resource identifier; the radar id (the Radar Processor unit number)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "ws": {
+          "$ref": "#/definitions/WsHeaderInfoRestDto",
+          "description": "WebSocket information provided for WebSocket delivered data"
+        }
+      }
+    },
+    "Void": {},
+    "WsHeaderInfoRestDto": {
+      "description": "Not used - Centroid data",
+      "properties": {
+        "send_time": {
+          "description": "time in epoch milliseconds the data was sent from MIS",
+          "format": "int64",
+          "type": "integer"
+        },
+        "sequenceNum": {
+          "description": "sequence number of data for this URL. This increases by 1 per message, but won't necessarily start at 1. ",
+          "format": "int64",
+          "type": "integer"
+        },
+        "url": {
+          "description": "subscription URL",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/centroids/{rp}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Returns current Centroids associated with the Radar at the given RP.<br>(For documentation purposes, a sample return is performed)",
+        "operationId": "getCentroids",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "rp",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data. <b>Note that since this is a REST endpoint example, the WebSocket Header Info is not shown.</b>",
+            "schema": {
+              "$ref": "#/definitions/CentroidsRestDto"
+            }
+          }
+        },
+        "summary": "Get Centroids via WebSocket"
+      }
+    }
+  },
+  "swagger": "2.0"
+}

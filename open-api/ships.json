@@ -1,0 +1,658 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "ErrorRestDto": {
+      "properties": {
+        "code": {
+          "description": "HTTP Status Code",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "summary description of the error",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL resulting in this error message",
+          "type": "string"
+        }
+      }
+    },
+    "FormerShipName": {
+      "properties": {
+        "callSign": {
+          "description": "Previous Call Sign of the ship",
+          "type": "string"
+        },
+        "country": {
+          "description": "*method=POST_OR_PUT*Alpha 3 Code as per ISO 3166-1 alpha-3 codes",
+          "type": "string"
+        },
+        "lastReported": {
+          "description": "Date the ship was last reported with this name. <br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00Z specifies a year-month-day followed by 24-hour hours:minutes:seconds in GMT time",
+          "type": "string"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/country' link references the ship's registered country during this time",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "Previous name of ship",
+          "type": "string"
+        },
+        "statusCode": {
+          "description": "*hidden*",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "HttpEntity«object»": {
+      "properties": {
+        "body": {
+          "type": "object"
+        },
+        "headers": {
+          "$ref": "#/definitions/HttpHeaders"
+        }
+      }
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "OtherShipId": {
+      "properties": {
+        "idType": {
+          "description": "The name or key describing this type of identifier",
+          "type": "string"
+        },
+        "idValue": {
+          "description": "The actual identification value asociated with this idType",
+          "type": "string"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "statusCode": {
+          "description": "*hidden*",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "idValue",
+        "idType"
+      ]
+    },
+    "ResponseBodyExceptionInfo": {
+      "description": "description not used ",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorRestDto",
+          "description": "error details"
+        }
+      }
+    },
+    "Ship": {
+      "properties": {
+        "aisName": {
+          "description": "AIS representation of name. {Source AIS Transponder}",
+          "type": "string"
+        },
+        "callSign": {
+          "description": "Call Sign",
+          "type": "string"
+        },
+        "country": {
+          "description": "*method=POST_OR_PUT*Alpha 3 Code of the country",
+          "type": "string"
+        },
+        "flagUrl": {
+          "description": "*method=GET*Image URL to the ship's registered country's flag",
+          "type": "string"
+        },
+        "fullName": {
+          "description": "Full ship name. {Populated by aisName if nothing else has been entered}",
+          "type": "string"
+        },
+        "id": {
+          "description": "the resource identifier; the ship id",
+          "format": "int32",
+          "type": "integer"
+        },
+        "imoNumber": {
+          "description": "IMO number",
+          "type": "string"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/detail' link references the ship's detailed information,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/countries' link references the ship's registered country",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "mmsiNumber": {
+          "description": "MMSI number",
+          "type": "string"
+        },
+        "shipDetail": {
+          "$ref": "#/definitions/ShipDetailRestDto",
+          "description": "Provides additional ship details including ship registry, construction, characteristics and contact information"
+        },
+        "sourceType": {
+          "description": "*method=POST_OR_PUT*['Ais' or 'Manual' or 'External']: The source type of the data",
+          "type": "string"
+        },
+        "thumbnailUrl": {
+          "description": "*method=GET*Image URL to the ship's primary photo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fullName"
+      ]
+    },
+    "ShipDetailRestDto": {
+      "properties": {
+        "aisDest": {
+          "description": "Ship Destination as per AIS",
+          "type": "string"
+        },
+        "aisDestArrTime": {
+          "description": "Ship Destination arrival time as per AIS. <br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00Z specifies a year-month-day followed by 24-hour hours:minutes:seconds in GMT time",
+          "type": "string"
+        },
+        "aisShipType": {
+          "description": "*method=GET*String representation of the ship type and cargo {Source AIS Transponder}",
+          "type": "string"
+        },
+        "aisShipTypeCode": {
+          "description": "Numerical code representation of the ship type and cargo from ITU-R M.1371 {Source AIS Transponder}",
+          "format": "int32",
+          "type": "integer"
+        },
+        "beam": {
+          "description": "Overall beam/width of ship (meters)",
+          "format": "float",
+          "type": "number"
+        },
+        "classificationSociety": {
+          "description": "The non-governmental organization that has validated and classified this ship",
+          "type": "string"
+        },
+        "crewSize": {
+          "description": "Standard crew size required to operate this ship",
+          "format": "int32",
+          "type": "integer"
+        },
+        "deadWeight": {
+          "description": "Dead weight / carrying capacity of the ship (tons)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "emailAddress": {
+          "description": "Standard email address to contact ship or ship liaison",
+          "type": "string"
+        },
+        "faxNumber": {
+          "description": "Standard fax number to contact ship or ship liaison",
+          "type": "string"
+        },
+        "formerNames": {
+          "description": "Former names that have been used by this ship",
+          "items": {
+            "$ref": "#/definitions/FormerShipName"
+          },
+          "type": "array"
+        },
+        "grossTonnage": {
+          "description": "Overall internal volume of the ship",
+          "format": "int32",
+          "type": "integer"
+        },
+        "id": {
+          "description": "the resource identifier; the ship id",
+          "format": "int32",
+          "type": "integer"
+        },
+        "inmarsatNumber": {
+          "description": "Contact number for ships fitted with Inmarsat",
+          "type": "string"
+        },
+        "length": {
+          "description": "Overall length of ship (meters)",
+          "format": "float",
+          "type": "number"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/portOfRegistry' link references the ship's port of registry",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "managerCompany": {
+          "description": "*hidden*",
+          "format": "int32",
+          "type": "integer"
+        },
+        "maxCapacity": {
+          "description": "Maximum capacity including crew, support personnel and passengers",
+          "format": "int32",
+          "type": "integer"
+        },
+        "operatorCompany": {
+          "description": "*hidden*",
+          "format": "int32",
+          "type": "integer"
+        },
+        "otherShipIds": {
+          "description": "Additional identification numbers associated with this ship {key/value pairs}",
+          "items": {
+            "$ref": "#/definitions/OtherShipId"
+          },
+          "type": "array"
+        },
+        "ownerCompany": {
+          "description": "*hidden*",
+          "format": "int32",
+          "type": "integer"
+        },
+        "passengerCapacity": {
+          "description": "Maximum number of passenger supported by this ship",
+          "format": "int32",
+          "type": "integer"
+        },
+        "phoneNumber": {
+          "description": "Standard phone number to contact ship or ship liaison",
+          "type": "string"
+        },
+        "registryPort": {
+          "description": "*method=POST_OR_PUT*This is the 'locode'; the International code for uniquely identifying this port",
+          "type": "string"
+        },
+        "staticDraft": {
+          "description": "Static draft (meters)",
+          "format": "float",
+          "type": "number"
+        },
+        "vesselClass": {
+          "description": "The classification given to this ship by the classification society",
+          "type": "string"
+        },
+        "yearOfBuild": {
+          "description": "Four digit representation of the year the ship was built",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "ShipsRestDto": {
+      "properties": {
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "ships": {
+          "description": "An array of Ships matching the query criteria",
+          "items": {
+            "$ref": "#/definitions/Ship"
+          },
+          "type": "array"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size",
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    },
+    "Void": {}
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/ships": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This is the primary means of searching ships.<br>It represents an array of ships that meet the specified search parameters.<br>Note that only one of the 'search' types of query 'Parameter Types' can be set at a time<br>&nbsp;&nbsp;&nbsp;&nbsp;(only one of imoNumber, lastUpdate, mmsiNumber, or shipName).<br>Note that the returned array of ships is paged.",
+        "operationId": "getShips",
+        "parameters": [
+          {
+            "description": "*hidden*",
+            "in": "query",
+            "name": "create",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Allows links to be expanded inline.<br>Values: detail",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Return all ships that have a complete or partial IMO match.",
+            "in": "query",
+            "name": "imoNumber",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Return all ships that have had data updated or have been created since the given datetime.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00Z specifies a year-month-day followed by 24-hour hours:minutes:seconds in GMT time<br><br>Note that to support usability the pagination query is ignored with this argument; all matched items will be returned.",
+            "in": "query",
+            "name": "lastUpdate",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Return all ships that have a complete or partial MMSI match.",
+            "in": "query",
+            "name": "mmsiNumber",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Return all ships that have a complete or partial Ship Name match.",
+            "in": "query",
+            "name": "shipName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": 1,
+            "description": "1-based page number",
+            "format": "int32",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "default": 20,
+            "description": "size of each page",
+            "format": "int32",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/ShipsRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Ships"
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Creates Ship item for any combination of basic and detailed information.<br>Note that the type of ship data must be specified in the sourceType of Ais, Manual, or External.",
+        "operationId": "postShip",
+        "parameters": [
+          {
+            "description": "model",
+            "in": "body",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Ship"
+            }
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified",
+            "schema": {
+              "$ref": "#/definitions/Ship"
+            }
+          },
+          "201": {
+            "description": "Description was not specified",
+            "schema": {
+              "$ref": "#/definitions/ResponseEntity«object»"
+            }
+          }
+        },
+        "summary": "Create Ship"
+      }
+    },
+    "/ships/get_external_data/{id_type_and_value}": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "post_getExternalData",
+        "operationId": "post_getExternalData",
+        "parameters": [
+          {
+            "description": "id_type_and_value",
+            "in": "path",
+            "name": "id_type_and_value",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Description was not specified",
+            "schema": {
+              "$ref": "#/definitions/HttpEntity«object»"
+            }
+          }
+        },
+        "summary": "post_getExternalData"
+      }
+    },
+    "/ships/{id}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This is the root representation of a specific ship object; it provides sufficient identification information to represent the ship object to the user. In addition to this data, it provides links to children and other associated objects, allowing one to gather all available information about a stored ship.",
+        "operationId": "getShip",
+        "parameters": [
+          {
+            "description": "the ship id",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Allows links to be expanded inline.<br>Values: detail",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/Ship"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such ship found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Ship"
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Updates Ship item for any combination of basic and detailed information.<br>Note that the type of ship data must be specified in the sourceType of Ais, Manual, or External.<br>Note that unset input results in no change.",
+        "operationId": "putShip",
+        "parameters": [
+          {
+            "description": "the ship id",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "model",
+            "in": "body",
+            "name": "model",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/Ship"
+            }
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified",
+            "schema": {
+              "$ref": "#/definitions/Ship"
+            }
+          },
+          "204": {
+            "description": "Description was not specified"
+          }
+        },
+        "summary": "Update Ship"
+      }
+    },
+    "/ships/{id}/detail": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This endpoint returns additional ship details including ship registry, construction, characteristics and contact information.",
+        "operationId": "getShipDetail",
+        "parameters": [
+          {
+            "description": "the ship id",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/ShipDetailRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such ship found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Ship's Detail"
+      }
+    }
+  },
+  "swagger": "2.0"
+}

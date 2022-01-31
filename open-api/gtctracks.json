@@ -1,0 +1,917 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "AisAntPosRestDto": {
+      "properties": {
+        "posToBow": {
+          "description": "[0 to 511]: Distance from antenna position to bow - AIS Length A",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posToPort": {
+          "description": "[0 to 63]: Distance from antenna position to bow - AIS Length C",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posToStbd": {
+          "description": "[0 to 63]: Distance from antenna position to bow - AIS Length D",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posToStern": {
+          "description": "[0 to 511]: Distance from antenna position to bow - AIS Length B",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "posToBow",
+        "posToStern",
+        "posToPort",
+        "posToStbd"
+      ]
+    },
+    "AisFixingDeviceRestDto": {
+      "properties": {
+        "code": {
+          "description": "[1 to 15, (1 to 8, 15 has corresponding text)]: A numeric code  describing the ship's fixing device, as defined in the AIS Specification ITU-R M.1371-4",
+          "format": "int32",
+          "type": "integer"
+        },
+        "text": {
+          "description": "A string representation of the device code, using ITU-R M.1371-4 (Type of electronic position fixing device)",
+          "enum": [
+            "GPS",
+            " GLONASS",
+            " GPS/GLONASS",
+            " Loran-C",
+            " Chayka",
+            " INS",
+            " Surveyed",
+            " Galileo",
+            " Internal GNSS"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "AisNavStatusRestDto": {
+      "properties": {
+        "code": {
+          "description": "[0 to 8, 14]: describes the navigation status, as defined in the AIS Specification ITU-R M.1371-4",
+          "format": "int32",
+          "type": "integer"
+        },
+        "text": {
+          "description": "A string representation of the numeric code, as defined in Table 45 of ITU-R M.1371-4",
+          "enum": [
+            "Underway Engine",
+            " Anchored",
+            " Not Under Command",
+            " Restricted Maneuver",
+            " Constrained Draught",
+            " Moored",
+            " Aground",
+            " Fishing",
+            " Underway Sailing",
+            " AIS SART"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "AisShipTypeRestDto": {
+      "properties": {
+        "categoryText": {
+          "description": "The ship category, derived from the first digit of the code, using Table 50 of ITU-R M.1371-4",
+          "enum": [
+            "WIG",
+            " Vessel",
+            " HSC",
+            " Special Craft",
+            " Passenger Ship",
+            " Cargo Ship",
+            " Tanker",
+            " Other"
+          ],
+          "type": "string"
+        },
+        "code": {
+          "description": "[0-255 (1-99 defined)]: describes the ship type and cargo, as defined in the AIS Specification ITU-R M.1371-4",
+          "format": "int32",
+          "type": "integer"
+        },
+        "detailText": {
+          "description": "Additional ship type information, derived from the second digit of the code, using Table 50 of ITU-R M.1371-4",
+          "enum": [
+            "Cargo Category A",
+            " Cargo Category B",
+            " Cargo Category C",
+            " Cargo Category D",
+            " Fishing",
+            " Towing",
+            " Towing Large",
+            " Underwater Ops",
+            " Diving Ops",
+            " Military Ops",
+            " Sailing",
+            " Pleasure",
+            " Pilot",
+            " Search and Rescue",
+            " Tug",
+            " Port Tender",
+            " Antipollution Equip.",
+            " Law Enforcement",
+            " Local A",
+            " Local B",
+            " Medical Transport",
+            " Not Armed Conflict"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "AisSizeRestDto": {
+      "properties": {
+        "length": {
+          "description": "Overall length of object (meters)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "width": {
+          "description": "Overall width of object (meters)",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "width",
+        "length"
+      ]
+    },
+    "ErrorRestDto": {
+      "properties": {
+        "code": {
+          "description": "HTTP Status Code",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "summary description of the error",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL resulting in this error message",
+          "type": "string"
+        }
+      }
+    },
+    "GeoPosRestDto": {
+      "description": "Geophysical location",
+      "properties": {
+        "altitude": {
+          "description": "Height of the object above sea level (meters)",
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "description": "[-90 to +90]: Latitude of the object (Decimal Degrees, North Positive/South Negative)",
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "[-180 to +180]: Longitude of the object (Decimal Degrees, East Positive/West Negative)",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "KinematicsRestDto": {
+      "description": "Course and Speed",
+      "properties": {
+        "course": {
+          "description": "[0.0 to 359.9]: if an AIS track this is sourced from AIS, else its estimated course from the Tracker (degrees true). If its an AIS track and the AIS data is 'late', then this is sourced from the Tracker",
+          "format": "double",
+          "type": "number"
+        },
+        "speed": {
+          "description": "[0.0 to greater]: if an AIS track this is sourced from AIS, else its estimated speed from the Tracker (knots). If its an AIS track and the AIS data is 'late', then this is sourced from the Tracker",
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ResponseBodyExceptionInfo": {
+      "description": "description not used ",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorRestDto",
+          "description": "error details"
+        }
+      }
+    },
+    "TrackGtcDetailRestDto": {
+      "properties": {
+        "aisAntPos": {
+          "$ref": "#/definitions/AisAntPosRestDto",
+          "description": "The position of the AIS antenna {Source AIS Transponder}. Not shown if any of the input (AIS abcd) is missing."
+        },
+        "aisEta": {
+          "description": "The Estimated Time of Arrival {Source AIS Transponder}",
+          "type": "string"
+        },
+        "aisFixingDevice": {
+          "$ref": "#/definitions/AisFixingDeviceRestDto",
+          "description": "The electronic position fixing device used by the track {Source AIS Transponder}"
+        },
+        "aisMaxDraft": {
+          "description": "[0 to 25.5]: Max draft (draught) of the track (meters) {Source AIS Transponder}",
+          "format": "float",
+          "type": "number"
+        },
+        "aisMessageId": {
+          "description": "The AIS reported message id {Source AIS Transponder}",
+          "format": "int32",
+          "type": "integer"
+        },
+        "aisSize": {
+          "$ref": "#/definitions/AisSizeRestDto",
+          "description": "Overall length and beam of the ship (meters) {Source AIS Transponder}. Not shown if no data in the AIS abcd value."
+        },
+        "aisTypeOfShip": {
+          "$ref": "#/definitions/AisShipTypeRestDto",
+          "description": "Type of ship and cargo {Source AIS Transponder}"
+        },
+        "callSign": {
+          "description": "Call Sign {Source AIS Transponder}",
+          "type": "string"
+        },
+        "destination": {
+          "description": "Destination {Source AIS Transponder}",
+          "type": "string"
+        },
+        "extTrkId": {
+          "description": "A track Id that was provided from an external source",
+          "format": "int32",
+          "type": "integer"
+        },
+        "imo": {
+          "description": "IMO number {Source AIS Transponder}",
+          "format": "int32",
+          "type": "integer"
+        },
+        "mOfn": {
+          "description": "Number of times this track seen in last 10 consecutive radar scans. (Applicable only for Radar Tracks)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "maneuvering": {
+          "description": "Represents whether the track is maneuvering or not.",
+          "enum": [
+            "maneuvering"
+          ],
+          "type": "string"
+        },
+        "mmsi": {
+          "description": "MMSI number {Source AIS Transponder}",
+          "format": "int32",
+          "type": "integer"
+        },
+        "specialIndicators": {
+          "description": "An array of strings representing special indicators about this track<br>&nbsp;&nbsp;&nbsp;&nbsp;Interpretation:<br>&nbsp;&nbsp;&nbsp;&nbsp;BFT: Track is transmitting valid encrypted position reports<br>&nbsp;&nbsp;&nbsp;&nbsp;DscDistress: Track sent a DSC Distressed Vessel signal",
+          "enum": [
+            "BFT",
+            "DscDistress"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "trackingManual": {
+          "description": "Represents how the tracker handles this track for Radar Tracks. Set to 'Manual' if tracking manually",
+          "enum": [
+            "Manual"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "TrackGtcRestDto": {
+      "description": "Real-time gtc track object",
+      "properties": {
+        "affiliation": {
+          "description": "Affiliation of this track (Not shown if 'Unknown') {Source AIS Transponder}",
+          "enum": [
+            "Unknown",
+            "Friendly",
+            "Hostile",
+            "Neutral",
+            "Ownship",
+            "Pending",
+            "FriendlyAssumed",
+            "HostileSuspected",
+            "HostileJoker",
+            "HostileFaker",
+            "TrackOfInterest"
+          ],
+          "type": "string"
+        },
+        "aisClass": {
+          "description": "Class of AIS. 'B' for Class B, not shown for class A {source AIS Transponder}",
+          "type": "string"
+        },
+        "aisHeading": {
+          "description": "Heading of this track (degrees true) {Source AIS Transponder}",
+          "format": "float",
+          "type": "number"
+        },
+        "aisIndicators": {
+          "description": "AIS indicator flags. Not shown if none.{source AIS Transponder}",
+          "enum": [
+            "TOI AIS",
+            "TOI ARPA",
+            "TOI DR",
+            "Base Station",
+            "ATON",
+            "BFT",
+            "Sleeping",
+            "National AIS"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "aisNavStatus": {
+          "$ref": "#/definitions/AisNavStatusRestDto",
+          "description": "navigation status of this track (Not shown when the status code is 0 ('Underway Engine')) {source AIS Transponder}"
+        },
+        "boarding": {
+          "description": "Current boarding status of this track, used for Boarding Operations. (Not shown for 'NoInterest' boarding status)",
+          "enum": [
+            "NoInterest",
+            "Interest",
+            "OnBoard",
+            "Boarded"
+          ],
+          "type": "string"
+        },
+        "classification": {
+          "description": "Classification of this track (Not shown if 'Unknown') {Source AIS Transponder}",
+          "enum": [
+            "Unknown",
+            "SurfaceUnknown",
+            "Merchant",
+            "Cargo",
+            "SearchCenter",
+            "Navy",
+            "Tug",
+            "Ferry",
+            "Passenger",
+            "CoastGuard",
+            "Hazmat",
+            "Towing",
+            "Fishing",
+            "Drifter",
+            "Dredge",
+            "Trawler",
+            "Leisure",
+            "Hovercraft",
+            "MarineLife",
+            "Iceberg",
+            "DitchedAircraft",
+            "ManInWater",
+            "DistressedVessel",
+            "OilPlatform",
+            "AirHelo",
+            "AirFixedWing",
+            "SubsurfaceUnknown",
+            "AirUnknown",
+            "Ownship",
+            "Land",
+            "Buoy",
+            "AirUAV",
+            "RigidHullInflatable",
+            "Speedboat",
+            "OilTanker"
+          ],
+          "type": "string"
+        },
+        "detail": {
+          "$ref": "#/definitions/TrackGtcDetailRestDto",
+          "description": "additional track detailed information. Available if the expand parameter includes 'detail'"
+        },
+        "kinematics": {
+          "$ref": "#/definitions/KinematicsRestDto",
+          "description": "course and speed"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "maxDelayInterval": {
+          "description": "Maximum delayed interval (in seconds) that a track can be reported from the Tracker. The delay interval of tracks will vary from no delay (if no delay this field is absent) to this given reported interval. (The delay is based on speed; the slower the speed the greater the delay.) The track update time field matches the reported time even if the track is delayed (and the 'updateSince' query results work accordingly.) This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "description": "name of the track as set by AIS or user",
+          "type": "string"
+        },
+        "posUncertainty": {
+          "description": "area of positional uncertainty around this track (meters)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "position": {
+          "$ref": "#/definitions/GeoPosRestDto",
+          "description": "current position of this track"
+        },
+        "preferredTrackSource": {
+          "$ref": "#/definitions/TrackGtcSourceRestDto",
+          "description": "The tracker source selected to build the GTC track data"
+        },
+        "quality": {
+          "description": "[0-15]: quality of this track",
+          "format": "byte",
+          "type": "string"
+        },
+        "sources": {
+          "description": "ranked order of the various sources available to the Track Correlator tracker for this track. Available if the expand parameter includes 'sources'",
+          "items": {
+            "$ref": "#/definitions/TrackGtcSourceDataRestDto"
+          },
+          "type": "array"
+        },
+        "state": {
+          "description": "current state of this track ('Dropped' means track has either been specifically dropped or has not been updated by the tracker and will be removed from the system). Not shown if 'Steady'",
+          "enum": [
+            "NonSteady",
+            "Steady",
+            "SteadyCoasted",
+            "Parked",
+            "Dropped"
+          ],
+          "type": "string"
+        },
+        "time": {
+          "description": "time this track was updated by the Tracker",
+          "type": "string"
+        },
+        "trackIDsResetTime": {
+          "description": "this value is used to communicate if the Track Ids are reset and no longer related to their past Ids. This value gets changed if the Tracker is restarted or all tracks are dropped. Compare this with the previous track id reset time to know if the IDs represent the same track. This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "format": "int32",
+          "type": "integer"
+        },
+        "trackId": {
+          "description": "the track id (eg 'R1S3_17).<br>&nbsp;&nbsp;&nbsp;&nbsp;Represents a Global Track Correlator track starting with 'R' for region and then the region number,<br>&nbsp;&nbsp;&nbsp;&nbsp;followed by 'S' for source and then the 'TSI' (Track Source Id),<br>&nbsp;&nbsp;&nbsp;&nbsp;followed by '_' and then the id within this Region and Source",
+          "type": "string"
+        },
+        "turnRate": {
+          "description": "[-12.0 to 12.0]: Turn rate of this track (degrees per second) {Source AIS Transponder or Radar}",
+          "format": "float",
+          "type": "number"
+        },
+        "updateDelta": {
+          "description": "[0 to 255]: delta time since the track was last seen (seconds)  {Source AIS Transponder or Radar}",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "posUncertainty",
+        "quality",
+        "state",
+        "position",
+        "time",
+        "name"
+      ]
+    },
+    "TrackGtcSourceDataRestDto": {
+      "properties": {
+        "affiliation": {
+          "description": "Affiliation of this track (Not shown if 'Unknown')",
+          "enum": [
+            "Unknown",
+            "Friendly",
+            "Hostile",
+            "Neutral",
+            "Ownship",
+            "Pending",
+            "FriendlyAssumed",
+            "HostileSuspected",
+            "HostileJoker",
+            "HostileFaker",
+            "TrackOfInterest"
+          ],
+          "type": "string"
+        },
+        "classification": {
+          "description": "Classification of this track (Not shown if 'Unknown')",
+          "enum": [
+            "Unknown",
+            "SurfaceUnknown",
+            "Merchant",
+            "Cargo",
+            "SearchCenter",
+            "Navy",
+            "Tug",
+            "Ferry",
+            "Passenger",
+            "CoastGuard",
+            "Hazmat",
+            "Towing",
+            "Fishing",
+            "Drifter",
+            "Dredge",
+            "Trawler",
+            "Leisure",
+            "Hovercraft",
+            "MarineLife",
+            "Iceberg",
+            "DitchedAircraft",
+            "ManInWater",
+            "DistressedVessel",
+            "OilPlatform",
+            "AirHelo",
+            "AirFixedWing",
+            "SubsurfaceUnknown",
+            "AirUnknown",
+            "Ownship",
+            "Land",
+            "Buoy",
+            "AirUAV",
+            "RigidHullInflatable",
+            "Speedboat",
+            "OilTanker"
+          ],
+          "type": "string"
+        },
+        "kinematics": {
+          "$ref": "#/definitions/KinematicsRestDto",
+          "description": "course and speed"
+        },
+        "localId": {
+          "description": "the local track id",
+          "format": "int32",
+          "type": "integer"
+        },
+        "mOfn": {
+          "description": "Number of times this track seen in last 10 consecutive radar scans. (Applicable only for Radar Tracks)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "maneuvering": {
+          "description": "Represents whether the track is maneuvering or not.",
+          "enum": [
+            "maneuvering"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "description": "name of the track as set by AIS or user. This field is DEPRECATED and may no longer be populated. Rely on the name field at the top level (under TrackGtc)",
+          "type": "string"
+        },
+        "posUncertainty": {
+          "description": "area of positional uncertainty around this track (meters)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "position": {
+          "$ref": "#/definitions/GeoPosRestDto",
+          "description": "current position of this track"
+        },
+        "quality": {
+          "description": "[0-15]: quality of this track",
+          "format": "byte",
+          "type": "string"
+        },
+        "state": {
+          "description": "current state of this track ('Dropped' means track has either been specifically dropped or has not been updated by the tracker and will be removed from the system)",
+          "enum": [
+            "NonSteady",
+            "Steady",
+            "SteadyCoasted",
+            "Parked",
+            "Dropped"
+          ],
+          "type": "string"
+        },
+        "trackSource": {
+          "$ref": "#/definitions/TrackGtcSourceRestDto",
+          "description": "The tracker source used for this track source element"
+        },
+        "trackingManual": {
+          "description": "Represents how the tracker handles this track for Radar Tracks. Set to 'Manual' if tracking manually",
+          "enum": [
+            "manual"
+          ],
+          "type": "string"
+        },
+        "turnRate": {
+          "description": "[-12.0 to 12.0]: Turn rate of this track (degrees per second) {Source AIS Transponder or Radar}",
+          "format": "float",
+          "type": "number"
+        },
+        "updateDelta": {
+          "description": "[0 to 255]: delta time since the track was last seen (seconds)  {Source AIS Transponder or Radar}",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "posUncertainty",
+        "quality",
+        "state",
+        "position",
+        "localId",
+        "name"
+      ]
+    },
+    "TrackGtcSourceRestDto": {
+      "properties": {
+        "id": {
+          "description": "Unique value within same sensor source (1-64 for Radar, 1 for AIS, 1 on up for Generic)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Name assigned to the source within the system. It is not provided if unknown.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of source for the track.",
+          "enum": [
+            "Radar",
+            "AIS",
+            "NRT",
+            "Pending",
+            "Generic:External_Track",
+            "Generic:External_Radar",
+            "Generic:Sonar",
+            "Generic:IFF",
+            "Generic:DSC",
+            "Generic:ADS-B",
+            "Generic:Raveon",
+            "Unknown",
+            "Other"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ]
+    },
+    "TrackGtcsRestDto": {
+      "description": "Container for multiple GTC Tracks",
+      "properties": {
+        "items": {
+          "description": "An array of GTC Tracks matching the query criteria",
+          "items": {
+            "$ref": "#/definitions/TrackGtcRestDto"
+          },
+          "type": "array"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "maxDelayInterval": {
+          "description": "Maximum delayed interval (in seconds) that a track can be reported from the Tracker. The delay interval of tracks will vary from no delay (if no delay this field is absent) to this given reported interval. (The delay is based on speed; the slower the speed the greater the delay.) The track update time field matches the reported time even if the track is delayed (and the 'updateSince' query results work accordingly.) This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "format": "int32",
+          "type": "integer"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size (Shown for REST delivered data)",
+          "format": "int64",
+          "type": "integer"
+        },
+        "trackIDsResetTime": {
+          "description": "this value is used to communicate if the Track Ids are reset and no longer related to their past Ids. This value gets changed if the Tracker is restarted or all tracks are dropped. Compare this with the previous track id reset time to know if the IDs represent the same track. This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "format": "int32",
+          "type": "integer"
+        },
+        "ws": {
+          "$ref": "#/definitions/WsHeaderInfoRestDto",
+          "description": "WebSocket information provided for WebSocket delivered data"
+        }
+      }
+    },
+    "Void": {},
+    "WsHeaderInfoRestDto": {
+      "description": "Not used - Centroid data",
+      "properties": {
+        "send_time": {
+          "description": "time in epoch milliseconds the data was sent from MIS",
+          "format": "int64",
+          "type": "integer"
+        },
+        "sequenceNum": {
+          "description": "sequence number of data for this URL. This increases by 1 per message, but won't necessarily start at 1. ",
+          "format": "int64",
+          "type": "integer"
+        },
+        "url": {
+          "description": "subscription URL",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/gtctracks": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Specifies real-time GTC (Global Track Correlator) tracks. The caller requests the tracks of interest via specifying search criteria (none for all tracks), 'expand' settings for track fields of interest (none for default), and page settings to specify the page of interest (none for default).<br><br>This data is available via both REST and WebSockets.<br><br>Please note:<br>&nbsp;&nbsp;&nbsp;Permissions assigned to the user will automatically and implicitly limit what is retrieved (eg, 'Radar' permission is required to see any Radar track data     and 'BFT' permission is required to see data sourced from such)<br>&nbsp;&nbsp;&nbsp;Multiple query types (see 'Parameter') can be applied.<br>&nbsp;&nbsp;&nbsp;Links are given as an aid for further API queries.<br><br><b>List of recently introduced fields:</b><br>&nbsp;&nbsp;&nbsp;maxDelayInterval  (6/2021):<br>Added due to a recent change to the GTC Tracker's behavior in that it now has the potential to send out track's less frequently. (Slower moving tracks are sent out less frequently.) ",
+        "operationId": "getGtcTracks",
+        "parameters": [
+          {
+            "description": "Filters tracks to a bounding rectangular region whose sides parallel the latitude and longitude axes.<br>(Decimal Degrees, North Positive / East Positive)</br> Format is &lt;upper lat&gt;, &lt;left lon&gt;, &lt;lower lat&gt;, &lt;right lon&gt;<br>Example Value: 33.75,-118.50,33.25,-118.19",
+            "in": "query",
+            "name": "boundingRect",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Expands data seen by using any combination of 'detail' or 'sources'. Eg, 'expand=detail,sources'. (See the above Response Class section, Model breakout for a detailed list of the 'detail' (TrackGtcDetail) and 'sources' (TrackGtcSource) data",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks that have a complete or partial name match.",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks that have been updated since (greater than) a specific time.<br>This is useful for clients that are continually polling the server.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00Z specifies a year-month-day followed by 24-hour hours:minutes:seconds in GMT time<br><br>Note that to support usability the pagination query is ignored with this argument; all matched items will be returned.",
+            "in": "query",
+            "name": "updateSince",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks which have contributions from the given track sources which are not necessarly the preferred track source. Track sources are put together from a combination of Radar,AIS,Generic,NRT,Pending,Unknown,Other.<br> The 4 acceptable combinations:<br> (1) trackSource:  where the given trackSource contributes,  (2) OR(trackSource1, trackSource2, optional-trackSource3)  where any given trackSource contributes,  (3) AND(trackSource1, trackSource2, optional-trackSource3)  where all given trackSources contribute,  (4) ONLY(trackSource1, optional-trackSource2, optional-trackSource3)  where only (and all of) the given trackSource(s) contribute,  (5) NOT(trackSource1, optional-trackSource2, optional-trackSource3)  where none of the given trackSource(s) contribute.<br> Example 1: Generic - returns those tracks which have a Generic type providing one of the sources<br> Example 2: AND(AIS,Radar) - returns those tracks which have both AIS and Radar providing sources<br> Example 3: ONLY(Radar) - returns those tracks which ONLY have Radar providing the sources",
+            "in": "query",
+            "name": "trackSources",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks based on the 'preferred' (or 'primary') specified track source.  The track source is one of Radar,AIS,Generic,NRT,Pending,Unknown,Other",
+            "in": "query",
+            "name": "preferredTrackSource",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "If 'true', hide the links for the enclosed single track entries in order to reduce use of the network bandwidth. It defaults to 'false' (ie, show the links). It is suggested to set this to 'true' if the links are not referenced.",
+            "in": "query",
+            "name": "hideSingleLinks",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "default": 1,
+            "description": "1-based page number",
+            "format": "int32",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "default": 20,
+            "description": "size of each page",
+            "format": "int32",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/TrackGtcsRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get multiple GTC tracks"
+      }
+    },
+    "/gtctracks/{id}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Specifies a real-time GTC (Global Track Correlator) track. The caller requests the track of interest via track id, and 'expand' settings for track fields of interest (none for default).<br><br>Please note:<br>&nbsp;&nbsp;&nbsp;Permissions assigned to the user will automatically and implicitly limit what is retrieved (eg, 'Radar' permission is required to see any Radar track data     and 'BFT' permission is required to see data sourced from such)<br><br><b>List of recently introduced fields:</b><br>&nbsp;&nbsp;&nbsp;maxDelayInterval  (6/2021):<br>Added due to a recent change to the GTC Tracker's behavior in that it now has the potential to send out track's less frequently. (Slower moving tracks are sent out less frequently.) ",
+        "operationId": "getGtcTrack",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'R1S3_100').<br>Format is R&lt;region&gt;S&lt;Tracker Source unit number&gt;_&lt;track id&gt;<br>Example value of R1S3_100 represents Region 1, Tracker Source unit number 3, track id 100.<br><br>",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Expands data seen by using any combination of 'detail' or 'sources'. Eg, 'expand=detail,sources'. (See the above Response Class section, Model breakout for a detailed list of the 'detail' (TrackGtcDetail) and 'sources' (TrackGtcSource) data",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/TrackGtcRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get GTC Track"
+      }
+    }
+  },
+  "swagger": "2.0"
+}

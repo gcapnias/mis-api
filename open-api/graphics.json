@@ -1,0 +1,555 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "ErrorRestDto": {
+      "properties": {
+        "code": {
+          "description": "HTTP Status Code",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "summary description of the error",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL resulting in this error message",
+          "type": "string"
+        }
+      }
+    },
+    "GeoLatLonRestDto": {
+      "description": "Geophysical location",
+      "properties": {
+        "latitude": {
+          "description": "[-90 to +90]: Latitude of the object (Decimal Degrees, North Positive/South Negative)",
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "[-180 to +180]: Longitude of the object (Decimal Degrees, East Positive/West Negative)",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "GraphicCircleRestDto": {
+      "description": "Graphic Circle",
+      "properties": {
+        "center": {
+          "$ref": "#/definitions/GeoLatLonRestDto",
+          "description": "Center of a circle"
+        },
+        "radius": {
+          "description": "Radius (in meters) from the center of a circle",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "radius",
+        "center"
+      ]
+    },
+    "GraphicCreateInRestDto": {
+      "description": "graphic for defining Track or Radar Processing regions",
+      "properties": {
+        "circle": {
+          "$ref": "#/definitions/GraphicCircleRestDto",
+          "description": "circle definition (circle and polygon are exclusive)"
+        },
+        "graphicProcessingType": {
+          "description": "How tracks within this region are acquired or processed.",
+          "enum": [
+            "TRACK_LAND_MASK",
+            "ACQUISITION_WINDOW",
+            "ACQUISITION_AIS",
+            "ACQUISITION_IFF"
+          ],
+          "type": "string"
+        },
+        "polygon": {
+          "description": "definition of a simple polygon (closed with no intersections). (circle and polygon are exclusive)",
+          "items": {
+            "$ref": "#/definitions/GeoLatLonRestDto"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "GraphicRestDto": {
+      "description": "graphic for defining Track or Radar Processing regions",
+      "properties": {
+        "circle": {
+          "$ref": "#/definitions/GraphicCircleRestDto",
+          "description": "circle definition (circle and polygon are exclusive)"
+        },
+        "graphicId": {
+          "description": "the graphic ID",
+          "format": "int32",
+          "type": "integer"
+        },
+        "graphicProcessingType": {
+          "description": "How tracks within this region are acquired or processed. The values which can be reported are one of TRACK_LAND_MASK, IMAGE_LAND_MASK, ACQUISITION_WINDOW, GUARD_ALARM, THRESHOLD_BIAS_MAP, SPECIAL1, SPECIAL2, ACQUISITION_AIS, ACQUISITION_IFF, ACQUISITION_RESERVED_1, ACQUISITION_RESERVED_2, DEAD_RECKONING, MANEUVERING_SENSITIVITY",
+          "enum": [
+            "TRACK_LAND_MASK",
+            "ACQUISITION_WINDOW",
+            "ACQUISITION_AIS",
+            "ACQUISITION_IFF"
+          ],
+          "type": "string"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "pendingState": {
+          "description": "the pending state of the graphic in response to a request (POST,PUT,DELETE) accepted at the MIS. Shown as one of a pending state, a failed state, or not shown. (The typical case is that the request is accepted by the RP server within a couple of seconds and the showing the pending state is very short-lived.) </br>If and when the request is accepted by the RP server (as determined by a positive acknowledgement at MIS) then the pending state is cleared and no longer shown. </br>If the request is not accepted by the RP server (as determined by lack of a positive acknowledgement at MIS) then the request eventually goes (after 1 to 30 seconds or so) from a pending state to a failed state and this failed state is shown for about 10 seconds before being cleared. </br>Therefore it is recommended that the user of this API poll for this response via the 'GET /graphics/{unitNumber}/{graphicId}' endpoint to know the status.</br>Please note that a 'Create Graphic' (POST) is shown only from the 'GET /graphics/{unitNumber}/{graphicId}' endpoint and not the 'GET /graphics/{unitNumber}' endpoint. ",
+          "enum": [
+            "pending-create",
+            "failed-create",
+            "pending-update",
+            "failed-update",
+            "pending-delete",
+            "failed-delete"
+          ],
+          "type": "string"
+        },
+        "polygon": {
+          "description": "definition of a simple polygon (closed with no intersections). (circle and polygon are exclusive)",
+          "items": {
+            "$ref": "#/definitions/GeoLatLonRestDto"
+          },
+          "type": "array"
+        },
+        "unitNumber": {
+          "description": "the unit number (id) of the rp or tracker",
+          "format": "int32",
+          "type": "integer"
+        },
+        "updateTime": {
+          "description": "this communicates any changes to the graphic. It is set by the PCRP at creation or update of the graphic (or upon restart of the PCRP, all times are set to the restart time)",
+          "type": "string"
+        }
+      }
+    },
+    "GraphicUpdateInRestDto": {
+      "description": "graphic for editing",
+      "properties": {
+        "circle": {
+          "$ref": "#/definitions/GraphicCircleRestDto",
+          "description": "circle definition (circle and polygon are exclusive)"
+        },
+        "polygon": {
+          "description": "definition of a simple polygon (closed with no intersections). (circle and polygon are exclusive)",
+          "items": {
+            "$ref": "#/definitions/GeoLatLonRestDto"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "GraphicsRestDto": {
+      "description": "Container for multiple Graphics",
+      "properties": {
+        "items": {
+          "description": "An array of Graphics matching the query criteria",
+          "items": {
+            "$ref": "#/definitions/GraphicRestDto"
+          },
+          "type": "array"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size",
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    },
+    "HttpEntity«GraphicRestDto»": {
+      "properties": {
+        "body": {
+          "$ref": "#/definitions/GraphicRestDto"
+        },
+        "headers": {
+          "$ref": "#/definitions/HttpHeaders"
+        }
+      }
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ResponseBodyExceptionInfo": {
+      "description": "description not used ",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorRestDto",
+          "description": "error details"
+        }
+      }
+    },
+    "Void": {}
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/graphics/{unitNumber}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Get all Graphics matching the criteria for the specific Radar (Tracker). </br></br> Note that only that which is accepted and known by the RP Manager is shown; no pending-create graphics are shown, and for pending-update the newest data is not shown, and pending-deletes are shown because they are not yet considered deleted. </br></br> It is recommended to use the 'GET /graphics/{unitNumber}/{graphicId} instead of this API to monitor the status of any pending graphic.",
+        "operationId": "getGraphicsForUnit",
+        "parameters": [
+          {
+            "description": "the unit number (id) of the rp or tracker",
+            "format": "int32",
+            "in": "path",
+            "name": "unitNumber",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Returns graphics that have been updated since (greater than) a specific time.<br>This is useful for clients that are continually polling the server.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00.050Z specifies a year-month-day followed by 24-hour hours:minutes:seconds.milliseconds in GMT time<br><br>Note that to support usability the pagination query is ignored with this argument; all matched items will be returned.</br></br>While this will show updated graphics, it will not show when graphics are deleted.",
+            "in": "query",
+            "name": "updateSince",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "How tracks within this region are acquired or processed. Can search for one of the following: TRACK_LAND_MASK, IMAGE_LAND_MASK, ACQUISITION_WINDOW, GUARD_ALARM, THRESHOLD_BIAS_MAP, SPECIAL1, SPECIAL2, ACQUISITION_AIS, ACQUISITION_IFF, ACQUISITION_RESERVED_1, ACQUISITION_RESERVED_2, DEAD_RECKONING, MANEUVERING_SENSITIVITY",
+            "in": "query",
+            "name": "graphicProcessingType",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": 1,
+            "description": "1-based page number",
+            "format": "int32",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "default": 20,
+            "description": "size of each page",
+            "format": "int32",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/GraphicsRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "Resource not found.</br>This can also happen if the RP Server is down or if the MIS (or RP Server) is so recently started it is not yet recognized as being up",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Graphics for the Unit"
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Create a Graphic with the supplied parameters.<br><br>When this request is made it will immediately respond with the graphic ID allocated and a pending state of pending creation.<br>Please note the following:<br>&nbsp;&nbsp;The RP Manager will not accept duplicate graphics (same shape and processing type). (This is one of the reasons for failure.)<br>&nbsp;&nbsp;To check on the status use follow-up GET requests (use the 'single' GET and not the 'multi' GET) to detect whether this request is fully accepted or not (timed-out and considered failed). Only the 'single' GET will return a pending/failed create request. The graphic ID returned is made available to support this. <br><br> Note that if many graphic change requests (add/delete/update) are made close together in time then there will be a delay in the response from the Graphics server (RP Manager). <br>This results in a false timeout being reported by MIS. <br>And note that for this case the graphics will be accepted and will eventually be seen. <br>For example, if there are 40 adds done with each one spaced a few seconds apart, this will result in a false timeout but the graphics will eventually be seen. <br>This situation needs to be considered by clients to MIS. <br>See the \"Parameters\" section for details of what to provide.",
+        "operationId": "createGraphic",
+        "parameters": [
+          {
+            "description": "the unit number (id) of the rp or tracker",
+            "format": "int32",
+            "in": "path",
+            "name": "unitNumber",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Parameters to create a Graphic.<br>A copy and pastable example of settings is:<br>{<br>&nbsp;\"graphicProcessingType\": \"ACQUISITION_WINDOW\",<br>&nbsp;\"circle\": {<br>&nbsp; &nbsp;\"center\": {<br>&nbsp; &nbsp;&nbsp;\"latitude\": 33.754257,<br>&nbsp; &nbsp;&nbsp;\"longitude\": -118.216557<br>&nbsp;&nbsp; },<br>&nbsp;&nbsp; \"radius\": 100<br>&nbsp;}<br>}",
+            "in": "body",
+            "name": "graphicInDto",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GraphicCreateInRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified",
+            "schema": {
+              "$ref": "#/definitions/HttpEntity«GraphicRestDto»"
+            }
+          },
+          "202": {
+            "description": "Accepted (the request to build the resource has been accepted but the resource itself is not yet necessarily created) ",
+            "schema": {
+              "$ref": "#/definitions/HttpEntity«GraphicRestDto»"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity. For POST of graphics this can happen for 2 reasons, both dealing with a system (Tracker or RP) unavailable for a given graphicProcessingType. <br/>(1) An active Tracker must be available to handle an ACQUISITION_WINDOW, ACQUISITION_AIS, or an ACQUISITION_IFF. <br/>(2) An active RP must be available to handle a TRACK_LAND_MASK.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Create a Graphic"
+      }
+    },
+    "/graphics/{unitNumber}/{graphicId}": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Deletes a graphic at the given unit with the given id. Deletes are shown as 'pending' until they are deleted by the RP Manager. Deletion can fail.<br><br> Note that if many graphic change requests (add/delete/update) are made close together in time then there will be a delay in the response from the Graphics server (RP Manager). <br>This results in a false timeout being reported by MIS. <br>And note that for this case the graphics will be accepted and will eventually be seen. <br>For example, if there are 40 adds done with each one spaced a few seconds apart, this will result in a false timeout but the graphics will eventually be seen. <br>This situation needs to be considered by clients to MIS. ",
+        "operationId": "deleteGraphic",
+        "parameters": [
+          {
+            "description": "the unit number (id) of the rp or tracker",
+            "format": "int32",
+            "in": "path",
+            "name": "unitNumber",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "the graphic ID",
+            "format": "int32",
+            "in": "path",
+            "name": "graphicId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "204": {
+            "description": "No Content (Success)"
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such graphic found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Delete graphic"
+      },
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Request a specific Graphic by Unit Number and Graphic ID.<br><br> This API (the 'single' GET) is the only API which will show the pending status of a pending-create (as performed via POST) graphic. (And like the 'multi' GET, it will show the data accepted at the RP and not that requested by MIS.) <br><br> Note that if many graphic change requests (add/delete/update) are made close together in time then there will be a delay in the response from the Graphics server (RP Manager). <br>This results in a false timeout being reported by MIS. <br>And note that for this case the graphics will be accepted and will eventually be seen. <br>For example, if there are 40 adds done with each one spaced a few seconds apart, this will result in a false timeout but the graphics will eventually be seen. <br>This situation needs to be considered by clients to MIS. ",
+        "operationId": "getGraphic",
+        "parameters": [
+          {
+            "description": "the unit number (id) of the rp or tracker",
+            "format": "int32",
+            "in": "path",
+            "name": "unitNumber",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "the graphic ID",
+            "format": "int32",
+            "in": "path",
+            "name": "graphicId",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/GraphicRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Graphic"
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update a Graphic with the supplied parameters.<br><br>When this request is made it will immediately respond with a pending state of pending update.<br><br>Please note the following:<br>&nbsp;&nbsp;A PUT is not allowed if the graphic is waiting (pending) on any operation.<br>&nbsp;&nbsp;Attempting to change the type of graphic shape will fail (eg, can't change from circle to polygon).<br>&nbsp;&nbsp;The RP Manager will not accept duplicate graphics (same shape and processing type). (This is one of the reasons for failure.)<br>&nbsp;&nbsp;To check on the status use follow-up GET requests to detect whether this request is fully accepted or not (timed-out and considered failed). <br><br> Note that if many graphic change requests (add/delete/update) are made close together in time then there will be a delay in the response from the Graphics server (RP Manager). <br>This results in a false timeout being reported by MIS. <br>And note that for this case the graphics will be accepted and will eventually be seen. <br>For example, if there are 40 adds done with each one spaced a few seconds apart, this will result in a false timeout but the graphics will eventually be seen. <br>This situation needs to be considered by clients to MIS. <br>See the \"Parameters\" section for details of what to provide.",
+        "operationId": "updateGraphic",
+        "parameters": [
+          {
+            "description": "the unit number (id) of the rp or tracker",
+            "format": "int32",
+            "in": "path",
+            "name": "unitNumber",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "the graphic ID",
+            "format": "int32",
+            "in": "path",
+            "name": "graphicId",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Parameters to update a Graphic.<br>A copy and pastable example of settings is:<br>{<br>&nbsp;\"circle\": {<br>&nbsp; &nbsp;\"center\": {<br>&nbsp; &nbsp;&nbsp;\"latitude\": 33.754257,<br>&nbsp; &nbsp;&nbsp;\"longitude\": -118.216557<br>&nbsp;&nbsp; },<br>&nbsp;&nbsp; \"radius\": 100<br>&nbsp;}<br>}",
+            "in": "body",
+            "name": "graphicInDto",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GraphicUpdateInRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to build the resource has been accepted but the resource itself is not yet necessarily created) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "Resource not found.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "409": {
+            "description": "Resource is pending an operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update a Graphic"
+      }
+    }
+  },
+  "swagger": "2.0"
+}

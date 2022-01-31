@@ -1,0 +1,1475 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "AisAntPosRestDto": {
+      "properties": {
+        "posToBow": {
+          "description": "[0 to 511]: Distance from antenna position to bow - AIS Length A",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posToPort": {
+          "description": "[0 to 63]: Distance from antenna position to bow - AIS Length C",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posToStbd": {
+          "description": "[0 to 63]: Distance from antenna position to bow - AIS Length D",
+          "format": "int32",
+          "type": "integer"
+        },
+        "posToStern": {
+          "description": "[0 to 511]: Distance from antenna position to bow - AIS Length B",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "posToBow",
+        "posToStern",
+        "posToPort",
+        "posToStbd"
+      ]
+    },
+    "AisFixingDeviceRestDto": {
+      "properties": {
+        "code": {
+          "description": "[1 to 15, (1 to 8, 15 has corresponding text)]: A numeric code  describing the ship's fixing device, as defined in the AIS Specification ITU-R M.1371-4",
+          "format": "int32",
+          "type": "integer"
+        },
+        "text": {
+          "description": "A string representation of the device code, using ITU-R M.1371-4 (Type of electronic position fixing device)",
+          "enum": [
+            "GPS",
+            " GLONASS",
+            " GPS/GLONASS",
+            " Loran-C",
+            " Chayka",
+            " INS",
+            " Surveyed",
+            " Galileo",
+            " Internal GNSS"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "AisNavStatusRestDto": {
+      "properties": {
+        "code": {
+          "description": "[0 to 8, 14]: describes the navigation status, as defined in the AIS Specification ITU-R M.1371-4",
+          "format": "int32",
+          "type": "integer"
+        },
+        "text": {
+          "description": "A string representation of the numeric code, as defined in Table 45 of ITU-R M.1371-4",
+          "enum": [
+            "Underway Engine",
+            " Anchored",
+            " Not Under Command",
+            " Restricted Maneuver",
+            " Constrained Draught",
+            " Moored",
+            " Aground",
+            " Fishing",
+            " Underway Sailing",
+            " AIS SART"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "AisShipTypeRestDto": {
+      "properties": {
+        "categoryText": {
+          "description": "The ship category, derived from the first digit of the code, using Table 50 of ITU-R M.1371-4",
+          "enum": [
+            "WIG",
+            " Vessel",
+            " HSC",
+            " Special Craft",
+            " Passenger Ship",
+            " Cargo Ship",
+            " Tanker",
+            " Other"
+          ],
+          "type": "string"
+        },
+        "code": {
+          "description": "[0-255 (1-99 defined)]: describes the ship type and cargo, as defined in the AIS Specification ITU-R M.1371-4",
+          "format": "int32",
+          "type": "integer"
+        },
+        "detailText": {
+          "description": "Additional ship type information, derived from the second digit of the code, using Table 50 of ITU-R M.1371-4",
+          "enum": [
+            "Cargo Category A",
+            " Cargo Category B",
+            " Cargo Category C",
+            " Cargo Category D",
+            " Fishing",
+            " Towing",
+            " Towing Large",
+            " Underwater Ops",
+            " Diving Ops",
+            " Military Ops",
+            " Sailing",
+            " Pleasure",
+            " Pilot",
+            " Search and Rescue",
+            " Tug",
+            " Port Tender",
+            " Antipollution Equip.",
+            " Law Enforcement",
+            " Local A",
+            " Local B",
+            " Medical Transport",
+            " Not Armed Conflict"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ]
+    },
+    "AisSizeRestDto": {
+      "properties": {
+        "length": {
+          "description": "Overall length of object (meters)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "width": {
+          "description": "Overall width of object (meters)",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "width",
+        "length"
+      ]
+    },
+    "ErrorRestDto": {
+      "properties": {
+        "code": {
+          "description": "HTTP Status Code",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "summary description of the error",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL resulting in this error message",
+          "type": "string"
+        }
+      }
+    },
+    "GeoLocationRestDto": {
+      "properties": {
+        "altitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "GeoPosRestDto": {
+      "description": "Geophysical location",
+      "properties": {
+        "altitude": {
+          "description": "Height of the object above sea level (meters)",
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "description": "[-90 to +90]: Latitude of the object (Decimal Degrees, North Positive/South Negative)",
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "[-180 to +180]: Longitude of the object (Decimal Degrees, East Positive/West Negative)",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "IffModeRestDto": {
+      "properties": {
+        "code": {
+          "description": "[0 to 4095]: The value of the IFF tracks' response to the interrogation",
+          "format": "int32",
+          "type": "integer"
+        },
+        "validity": {
+          "description": "The validity of the response, generated from the IFF Response processor",
+          "enum": [
+            "Clear",
+            "Interleaved",
+            "CloselySpaced",
+            "Garbled",
+            "Phantom"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "validity"
+      ]
+    },
+    "KinematicsRestDto": {
+      "description": "Course and Speed",
+      "properties": {
+        "course": {
+          "description": "[0.0 to 359.9]: if an AIS track this is sourced from AIS, else its estimated course from the Tracker (degrees true). If its an AIS track and the AIS data is 'late', then this is sourced from the Tracker",
+          "format": "double",
+          "type": "number"
+        },
+        "speed": {
+          "description": "[0.0 to greater]: if an AIS track this is sourced from AIS, else its estimated speed from the Tracker (knots). If its an AIS track and the AIS data is 'late', then this is sourced from the Tracker",
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ResponseBodyExceptionInfo": {
+      "description": "description not used ",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorRestDto",
+          "description": "error details"
+        }
+      }
+    },
+    "TrackAffiliationRestDto": {
+      "properties": {
+        "affiliation": {
+          "description": "Affiliation of this track",
+          "enum": [
+            "Unknown",
+            "Friendly",
+            "Hostile",
+            "Neutral",
+            "Ownship",
+            "Pending",
+            "FriendlyAssumed",
+            "HostileSuspected",
+            "HostileJoker",
+            "HostileFaker",
+            "TrackOfInterest"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "TrackBoardingRestDto": {
+      "properties": {
+        "boarding": {
+          "description": "Current boarding status of this track, used for Boarding Operations",
+          "enum": [
+            "NoInterest",
+            "Interest",
+            "OnBoard",
+            "Boarded"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "TrackClassificationRestDto": {
+      "properties": {
+        "classification": {
+          "description": "Classification of this track",
+          "enum": [
+            "Unknown",
+            "SurfaceUnknown",
+            "Merchant",
+            "Cargo",
+            "SearchCenter",
+            "Navy",
+            "Tug",
+            "Ferry",
+            "Passenger",
+            "CoastGuard",
+            "Hazmat",
+            "Towing",
+            "Fishing",
+            "Drifter",
+            "Dredge",
+            "Trawler",
+            "Leisure",
+            "Hovercraft",
+            "MarineLife",
+            "Iceberg",
+            "DitchedAircraft",
+            "ManInWater",
+            "DistressedVessel",
+            "OilPlatform",
+            "AirHelo",
+            "AirFixedWing",
+            "SubsurfaceUnknown",
+            "AirUnknown",
+            "Ownship",
+            "Land",
+            "Buoy",
+            "AirUAV",
+            "RigidHullInflatable",
+            "Speedboat",
+            "OilTanker"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "TrackDetailRestDto": {
+      "properties": {
+        "acqMode": {
+          "description": "Represents how the track was initiated by the tracker, automatically through a graphic or manually by the operator (or AIS)",
+          "enum": [
+            "Auto",
+            "Manual"
+          ],
+          "type": "string"
+        },
+        "aisAntPos": {
+          "$ref": "#/definitions/AisAntPosRestDto",
+          "description": "The position of the AIS antenna {Source AIS Transponder}"
+        },
+        "aisEta": {
+          "description": "The Estimated Time of Arrival {Source AIS Transponder}",
+          "type": "string"
+        },
+        "aisFixingDevice": {
+          "$ref": "#/definitions/AisFixingDeviceRestDto",
+          "description": "The electronic position fixing device used by the track {Source AIS Transponder}"
+        },
+        "aisMaxDraft": {
+          "description": "[0 to 25.5]: Max draft (draught) of the track (meters) {Source AIS Transponder}",
+          "format": "float",
+          "type": "number"
+        },
+        "aisTypeOfShip": {
+          "$ref": "#/definitions/AisShipTypeRestDto",
+          "description": "Type of ship and cargo {Source AIS Transponder}"
+        },
+        "extTrkId": {
+          "description": "A track Id that was provided from an external source",
+          "format": "int32",
+          "type": "integer"
+        },
+        "id": {
+          "description": "the resource identifier; the track id (like 'COM0100100')",
+          "type": "string"
+        },
+        "imoNumber": {
+          "description": "IMO number",
+          "format": "int32",
+          "type": "integer"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "mmsiNumber": {
+          "description": "MMSI number",
+          "format": "int32",
+          "type": "integer"
+        },
+        "sizeType": {
+          "$ref": "#/definitions/AisSizeRestDto",
+          "description": "Overall length and beam of the ship (meters)"
+        },
+        "specialIndicators": {
+          "description": "An array of strings representing special indicators about this track<br>&nbsp;&nbsp;&nbsp;&nbsp;Interpretation:<br>&nbsp;&nbsp;&nbsp;&nbsp;HighInterest / NmeaReportable: Legacy use<br>&nbsp;&nbsp;&nbsp;&nbsp;BFT: Track is transmitting valid encrypted position reports<br>&nbsp;&nbsp;&nbsp;&nbsp;ToiLocal: Track designated as a TOI from a local source<br>&nbsp;&nbsp;&nbsp;&nbsp;ToiRemote: Track designated as a TOI from a remote source<br>&nbsp;&nbsp;&nbsp;&nbsp;DscDistress: Track sent a DSC Distressed Vessel signal",
+          "enum": [
+            "HighInterest",
+            "BFT",
+            "NmeaReportable",
+            "ToiLocal",
+            "ToiRemote",
+            "DscDistress"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "trkMode": {
+          "description": "Represents how the tracker is currently tracking this track, manual tracks are handled differently than auto tracks. {See Track Quality}",
+          "enum": [
+            "Auto",
+            "Manual"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "acqMode",
+        "trkMode"
+      ]
+    },
+    "TrackIffRestDto": {
+      "properties": {
+        "id": {
+          "description": "the resource identifier; the track id (like 'COM0100100')",
+          "type": "string"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "mode1": {
+          "$ref": "#/definitions/IffModeRestDto",
+          "description": "IFF Mode 1 response from this track"
+        },
+        "mode2": {
+          "$ref": "#/definitions/IffModeRestDto",
+          "description": "IFF Mode 2 response from this track"
+        },
+        "mode3A": {
+          "$ref": "#/definitions/IffModeRestDto",
+          "description": "IFF Mode 3/A response from this track"
+        },
+        "modeC": {
+          "$ref": "#/definitions/IffModeRestDto",
+          "description": "IFF Mode C response from this track"
+        }
+      }
+    },
+    "TrackNameRestDto": {
+      "properties": {
+        "name": {
+          "description": "name of the track. <br>Changes the name associated with the track. It can be up to 15 characters",
+          "type": "string"
+        }
+      }
+    },
+    "TrackPostParametersRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "extTrkId": {
+          "description": "[1 to 65535]: optionally supplied tracking number strictly for the benefit of the user to associate with the created track and not used by MIS",
+          "format": "int32",
+          "type": "integer"
+        },
+        "location": {
+          "$ref": "#/definitions/GeoLocationRestDto",
+          "description": "location at which to create the track. This is coupled with the searchRadius to find the area of radar return with which to associate the track"
+        },
+        "searchRadius": {
+          "description": "optionally supplied search radius in meters around the 'location' parameter within which to create the track. (Defaults to 100.0 meters)<br/>Adjust this parameter when an operator creates a track from the user interface. The current range scale and viewport pixel density will define the meters per pixel, which will drive the searchRadius value. As a general example, if using 1920x1080 display at 1 NMI range scale the search radius may be 25-50 meters and at 10 NMI may be 250-500 meters.",
+          "format": "float",
+          "type": "number"
+        },
+        "type": {
+          "description": "optionally supplied type of track",
+          "enum": [
+            "Surface",
+            " Air",
+            " Iff",
+            " SurfaceImo"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "TrackRestDto": {
+      "description": "Real-time track object",
+      "properties": {
+        "affiliation": {
+          "description": "Affiliation of this track",
+          "enum": [
+            "Unknown",
+            "Friendly",
+            "Hostile",
+            "Neutral",
+            "Ownship",
+            "Pending",
+            "FriendlyAssumed",
+            "HostileSuspected",
+            "HostileJoker",
+            "HostileFaker",
+            "TrackOfInterest"
+          ],
+          "type": "string"
+        },
+        "aisHeading": {
+          "description": "Heading of this track (degrees true) {Source AIS Transponder}",
+          "format": "int32",
+          "type": "integer"
+        },
+        "aisNavStatus": {
+          "$ref": "#/definitions/AisNavStatusRestDto",
+          "description": "navigation status of this track {source AIS Transponder}"
+        },
+        "aisTurnRate": {
+          "description": "[-12.0 to 12.0]: Turn rate of this track (degrees per second) {Source AIS Transponder}",
+          "format": "float",
+          "type": "number"
+        },
+        "aisUpdateDelta": {
+          "description": "[0 to 255]: delta time since the last AIS message was received from the track's AIS transponder (seconds)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "bearing": {
+          "description": "[0.0 to 359.9]: track's bearing from the reference point (degrees true) {Landbased: w.r.t Tracker Position, Shipboard: w.r.t Ownship Position}",
+          "format": "float",
+          "type": "number"
+        },
+        "boarding": {
+          "description": "Current boarding status of this track, used for Boarding Operations",
+          "enum": [
+            "NoInterest",
+            "Interest",
+            "OnBoard",
+            "Boarded"
+          ],
+          "type": "string"
+        },
+        "classification": {
+          "description": "Classification of this track",
+          "enum": [
+            "Unknown",
+            "SurfaceUnknown",
+            "Merchant",
+            "Cargo",
+            "SearchCenter",
+            "Navy",
+            "Tug",
+            "Ferry",
+            "Passenger",
+            "CoastGuard",
+            "Hazmat",
+            "Towing",
+            "Fishing",
+            "Drifter",
+            "Dredge",
+            "Trawler",
+            "Leisure",
+            "Hovercraft",
+            "MarineLife",
+            "Iceberg",
+            "DitchedAircraft",
+            "ManInWater",
+            "DistressedVessel",
+            "OilPlatform",
+            "AirHelo",
+            "AirFixedWing",
+            "SubsurfaceUnknown",
+            "AirUnknown",
+            "Ownship",
+            "Land",
+            "Buoy",
+            "AirUAV",
+            "RigidHullInflatable",
+            "Speedboat",
+            "OilTanker"
+          ],
+          "type": "string"
+        },
+        "details": {
+          "$ref": "#/definitions/TrackDetailRestDto",
+          "description": "additional track detailed information. Presented as data if the expand parameter is set to 'detail' else represented as a REST URL link"
+        },
+        "id": {
+          "description": "the resource identifier; the track id (like 'COM0100100')",
+          "type": "string"
+        },
+        "iff": {
+          "$ref": "#/definitions/TrackIffRestDto",
+          "description": "additional track IFF information. Presented as data if the expand parameter is set to 'iff' and data available else represented as a REST URL link"
+        },
+        "isSourceGtc": {
+          "description": "if this gets reported as 'true' then it signifies the source of all tracks is from the GTC tracker instead of the Composite Tracker. (This field is absent means the same as 'false'.) This means the data fields are to be interpreted based on the GTC track field's descriptions and the track reporting interval follows the GTC track reporting interval. (See the GTC track field 'maxDelayInterval' to see more information on this.) This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "type": "boolean"
+        },
+        "kinematics": {
+          "$ref": "#/definitions/KinematicsRestDto",
+          "description": "course and speed"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/detail' link references this track's detailed information,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/iff' link references this track's IFF information, and exists if there is IFF information,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/ship' link references this track's associated Ship, and exists if one can be found in the system.",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "name of the track as set by AIS or user",
+          "type": "string"
+        },
+        "posUncertainty": {
+          "description": "area of positional uncertainty around this track (meters)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "position": {
+          "$ref": "#/definitions/GeoPosRestDto",
+          "description": "current position of this track"
+        },
+        "quality": {
+          "description": "[Auto Tracks: 0-36, Manual Tracks: 0-120]: quality of this track",
+          "format": "int32",
+          "type": "integer"
+        },
+        "range": {
+          "description": "track's range from the reference point (meters) {Landbased: w.r.t Tracker Position, Shipboard: w.r.t Ownship Position}",
+          "format": "float",
+          "type": "number"
+        },
+        "sensorSrcs": {
+          "description": "String array representing all the sensors contributing to this track",
+          "enum": [
+            "Radar",
+            "AIS",
+            "IFF",
+            "DF",
+            "Generic",
+            "Video",
+            "Sonar",
+            "AIS-B",
+            "Air"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "state": {
+          "description": "current state of this track ('Dropped' means track has either been specifically dropped OR has not been updated by the tracker and will be removed from the system)",
+          "enum": [
+            "NonSteady",
+            "Steady",
+            "SteadyCoasted",
+            "Parked",
+            "Dropped"
+          ],
+          "type": "string"
+        },
+        "time": {
+          "description": "time this track was updated by the Composite Tracker",
+          "type": "string"
+        },
+        "trackIDsResetTime": {
+          "description": "this value is used to communicate if the Track Ids are reset and no longer related to their past Ids. This value gets changed if the Tracker is restarted or all tracks are dropped. Compare this with the previous track id reset time to know if the IDs represent the same track. This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "format": "int32",
+          "type": "integer"
+        },
+        "updatingSrc": {
+          "description": "['NA' or 'RP01'-'RP64' or 'AIS' or 'GEN01'-'GEN16']: last updating source for this track",
+          "type": "string"
+        }
+      },
+      "required": [
+        "posUncertainty",
+        "bearing",
+        "range",
+        "quality",
+        "state",
+        "position",
+        "time",
+        "name"
+      ]
+    },
+    "TracksRestDto": {
+      "description": "Container for multiple Tracks",
+      "properties": {
+        "isSourceGtc": {
+          "description": "if this gets reported as 'true' then it signifies the source of all tracks is from the GTC tracker instead of the Composite Tracker. (This field is absent means the same as 'false'.) This means the data fields are to be interpreted based on the GTC track field's descriptions and the track reporting interval follows the GTC track reporting interval. (See the GTC track field 'maxDelayInterval' to see more information on this.) This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "type": "boolean"
+        },
+        "items": {
+          "description": "An array of Tracks matching the query criteria",
+          "items": {
+            "$ref": "#/definitions/TrackRestDto"
+          },
+          "type": "array"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size",
+          "format": "int64",
+          "type": "integer"
+        },
+        "trackIDsResetTime": {
+          "description": "this value is used to communicate if the Track Ids are reset and no longer related to their past Ids. This value gets changed if the Tracker is restarted or all tracks are dropped. Compare this with the previous track id reset time to know if the IDs represent the same track. This is reported at the top-level enclosing object; ie, it is not reported for each single track if it's a multi-track lookup",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "Void": {}
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/tracks": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Delete all tracks from the system; both those automatically acquired and manual.<br>",
+        "operationId": "deleteTracks",
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "204": {
+            "description": "No Content (Success)"
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Delete all Tracks from the System"
+      },
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This is the primary means of searching the real-time tracks in the system. An array of tracks is returned, allowing a client to select the desired track for more detailed information.<br><br>Please note that:<br>&nbsp;&nbsp;&nbsp;Permissions assigned to the user will automatically and implicitly limit what is retrieved (eg, 'Radar' permission is required to see any Radar track data     and 'BFT' permission is required to see data sourced from such)<br>&nbsp;&nbsp;&nbsp;Multiple query types (see 'Parameter') can be applied,<br><br><b>List of recently introduced fields:</b><br>&nbsp;&nbsp;&nbsp;isSourceGtc (6/2021):<br>Added to indicate that the source of the /tracks endpoint data is from the GTC Tracker, not the Composite Tracker. (Availability of data on the /tracks endpoint is provided as a convenience to users of this endpoint. There is generally only one Tracker type running within the system so this data would not otherwise be available.) However, there are several implications of this: <br>&nbsp;&nbsp;&nbsp;&nbsp;- the data fields are to be interpreted based on the GTC track field's descriptions instead (eg, the 'quality' field has a different range when the data is sourced by GTC), <br>&nbsp;&nbsp;&nbsp;&nbsp;- and the track reporting interval follows the GTC track reporting interval. (See the GTC track field 'maxDelayInterval' to see more information on this.)",
+        "operationId": "getCompositeTrackTypes",
+        "parameters": [
+          {
+            "description": "Filters tracks to a bounding rectangular region whose sides parallel the latitude and longitude axes.<br>(Decimal Degrees, North Positive / East Positive)</br> Format is &lt;upper lat&gt;, &lt;left lon&gt;, &lt;lower lat&gt;, &lt;right lon&gt;<br>Example Value: 33.75,-118.50,33.25,-118.19",
+            "in": "query",
+            "name": "boundingRect",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Allows links to be expanded inline.<br>Values: any combination of [detail, iff]<br>Example Value: detail,iff.<br><br>Permissions Note: Users without RadarTracks permission may not ask for IFF data.<br>",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks that have a complete or partial name match.",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks that have correlation with specific sensor type(s).<br>Values: Special combination of [Radar, AIS, IFF, DF, Generic, Video, Sonar, AIS-A, AIS-B, Air]<br>Note that 'AIS' is a convenience for including both AIS Class A and AIS Class B tracks.<br>Several different operations are accepted:<br>---Provide a single Sensor,<br>---Provide 'AND' or 'OR' to require all of (AND) or one of (OR) sensors to be present in the track,<br>   (requires multiple sensors as arguments),<br>---Provide 'NOT' to exclude tracks having the sensor(s) present,<br>---Provide 'ONLY' to include tracks which match the given sensor.<br>   (requres a single sensor as argument),<br>Example 1: 'Radar' returns Radar correlated tracks.<br>Example 2: 'AND(Radar,AIS)' returns tracks correlated with both Radar AND any combo of AIS-A or AIS-B.<br>Example 3: 'OR(Radar,AIS)' returns tracks correlated with Radar OR AIS-A OR AIS-B.<br>Example 4: 'ONLY(AIS)' returns tracks correlated ONLY WITH AIS (any combo of AIS-A or AIS-B).<br>Example 5: 'NOT(Radar,AIS)' returns tracks NOT correlated with Radar or AIS-A or AIS-B.<br><br>Permissions Note: Users without RadarTracks permission will have all Radar-only tracks and radar data filtered out.<br>",
+            "in": "query",
+            "name": "sensorSrc",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks that have been updated since (greater than) a specific time.<br>This is useful for clients that are continually polling the server.<br><br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00Z specifies a year-month-day followed by 24-hour hours:minutes:seconds in GMT time<br><br>Note that to support usability the pagination query is ignored with this argument; all matched items will be returned.",
+            "in": "query",
+            "name": "updateSince",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Returns tracks that have been updated with a specific sensor.<br>Value: [RP&lt;unit_num&gt;, AIS, GEN&lt;unit_num&gt;]<br>Example Values: RP4, RP04<br>Permissions Note: Users without RadarTracks permission will not be allowed to query for Radar (RP) type of tracks.<br>",
+            "in": "query",
+            "name": "updateSrc",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "default": 1,
+            "description": "1-based page number",
+            "format": "int32",
+            "in": "query",
+            "name": "page",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "default": 20,
+            "description": "size of each page",
+            "format": "int32",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/TracksRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Tracks"
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Create a manual track with the supplied parameters.<br>See the \"Parameters\" section for details.",
+        "operationId": "postTrack",
+        "parameters": [
+          {
+            "description": "Parameters to create a track.<br>Note that only the latitude and longitude parameters are required; defaults are provided for others or capabilities are not provided.<br>A copy and pastable example of settings is:<br>{  \"location\": {<br>  &nbsp;&nbsp;&nbsp;\"latitude\": 33.73301,<br>  &nbsp;&nbsp;&nbsp;\"longitude\": -118.18548<br>  },<br> \"extTrkId\": 101<br>}",
+            "in": "body",
+            "name": "trackPostParameters",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TrackPostParametersRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to build the resource has been accepted but the resource itself is not yet necessarily created) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Create a Manual Track"
+      }
+    },
+    "/tracks/{id}": {
+      "delete": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Deletes the specified track from the system.",
+        "operationId": "deleteTrack",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "204": {
+            "description": "No Content (Success)"
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Delete a Track"
+      },
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Root representation of a specific track object; providing sufficient identification and kinematic information to represent the track object to the user. In addition to this data, it provides links to children and other associated objects, allowing one to gather all available information about a real-time track.<br>Please note:<br>&nbsp;&nbsp;&nbsp;Permissions assigned to the user will automatically and implicitly limit what is retrieved (eg, 'Radar' permission is required to see any Radar track data     and 'BFT' permission is required to see data sourced from such)<br><br><b>List of recently introduced fields:</b><br>&nbsp;&nbsp;&nbsp;isSourceGtc (6/2021):<br>Added to indicate that the source of the /tracks endpoint data is from the GTC Tracker, not the Composite Tracker. (Availability of data on the /tracks endpoint is provided as a convenience to users of this endpoint. There is generally only one Tracker type running within the system so this data would not otherwise be available.) However, there are several implications of this: <br>&nbsp;&nbsp;&nbsp;&nbsp;- the data fields are to be interpreted based on the GTC track field's descriptions instead (eg, the 'quality' field has a different range when the data is sourced by GTC), <br>&nbsp;&nbsp;&nbsp;&nbsp;- and the track reporting interval follows the GTC track reporting interval. (See the GTC track field 'maxDelayInterval' to see more information on this.)",
+        "operationId": "getCompositeTrackType",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Allows links to be expanded inline.<br>Values: any combination of [detail, iff]<br>Example Value: detail,iff.<br><br>Permissions Note: Users without RadarTracks permission may not ask for IFF data.<br>",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/TrackRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Track"
+      }
+    },
+    "/tracks/{id}/affiliation": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update the track's affiliation by changing the 'affiliation' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "updateTrackAffiliation",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameter to update a track's affiliation.<br>For example:<br>{  \"affiliation\":\"Friendly\"}",
+            "in": "body",
+            "name": "trackAffiliation",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TrackAffiliationRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update the Track Affiliation"
+      }
+    },
+    "/tracks/{id}/boarding": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update the track's boarding status by changing the 'boarding' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "updateTrackBoarding",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameter to update a track's boarding status.<br>For example:<br>{  \"boarding\":\"Interest\"}",
+            "in": "body",
+            "name": "trackBoarding",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TrackBoardingRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update the Track Boarding"
+      }
+    },
+    "/tracks/{id}/classification": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update the track's classification status by changing the 'classification' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "updateTrackClassification",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameter to update a track's classification status.<br>For example:<br>{  \"classification\":\"Unknown\"}",
+            "in": "body",
+            "name": "trackClassification",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TrackClassificationRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update the Track Classification"
+      }
+    },
+    "/tracks/{id}/detail": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This endpoint returns additional track details.",
+        "operationId": "getTrackDetail",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/TrackDetailRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Track's details"
+      }
+    },
+    "/tracks/{id}/iff": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This endpoint returns additional information on IFF tracks. This information is only provided if IFF PCRPs are included in the system",
+        "operationId": "getTrackIff",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/TrackIffRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Track's IFF information"
+      }
+    },
+    "/tracks/{id}/kinematics": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update the track's kinematics by changing the 'kinematics' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "updateTrackKinematics",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameter to update a track's kinematics.<br>For example:<br>{ \"course\":90.0, \"speed\":10.3 } ",
+            "in": "body",
+            "name": "trackKinematics",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/KinematicsRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update the Track Kinematics"
+      }
+    },
+    "/tracks/{id}/name": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update the track name by changing the 'name' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "updateTrackName",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameter to update a track's name.<br>For example:<br>{  \"name\": \"myTrack\"}",
+            "in": "body",
+            "name": "trackName",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TrackNameRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update the Track Name"
+      }
+    },
+    "/tracks/{id}/position": {
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Update the track position by changing the 'position' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "updateTrackPosition",
+        "parameters": [
+          {
+            "description": "the track id (e.g. 'COM0100100').<br>Format is &lt;\"COM\"|\"SYS\"|\"SEN\"&gt;&lt;TSI&gt; &lt;CTI&gt;<br><br>The first three characters represent the current tracker mode,<br>&nbsp;&nbsp;COM=Composite Tracker,<br>&nbsp;&nbsp;SYS=System Tracker and<br>&nbsp;&nbsp;SEN = Sensor Tracker.<br>The next 2 digits represent the Tracker Unit Number (TSI).<br>The last 5 digits represent the Local Track ID (CTI)<br>(and must be exactly 5 digits long to be valid).<br><br>Example Value: 'COM0100002' is from the Composite Tracker, uses 1 as the TSI and 2 as the CTI.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameter to update a track's position.<br>For example:<br>{ \"latitude\":33.7, \"longitude\":-118 } ",
+            "in": "body",
+            "name": "trackPosition",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GeoPosRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such track found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Update the Track Position"
+      }
+    }
+  },
+  "swagger": "2.0"
+}

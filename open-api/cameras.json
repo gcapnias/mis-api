@@ -1,0 +1,890 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "BearingFieldOfViewRestDto": {
+      "description": "Bearing field of view",
+      "properties": {
+        "range": {
+          "description": "Range (in meters) for which the corresponding field of view width applies",
+          "format": "int32",
+          "type": "integer"
+        },
+        "width": {
+          "description": "Width of viewable presentation area (in degrees)",
+          "format": "byte",
+          "type": "string"
+        }
+      },
+      "required": [
+        "width",
+        "range"
+      ]
+    },
+    "CameraCommandAssignTrackRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "trackToAssign": {
+          "description": "Track ID to assign a Camera too. Track ID follows the form of 'COM0100002' where the first 2 digits represent the Tracker Source Id (TSI) (RP Unit Number) and the last 5 digits represent the Local Track ID (CTI).",
+          "type": "string"
+        }
+      }
+    },
+    "CameraCommandGenericRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "command": {
+          "description": "Command name",
+          "enum": [
+            "Wiper",
+            "IRMode",
+            "PanTilt",
+            "Volume",
+            "Mute",
+            "Play",
+            "Polarity",
+            "Scene"
+          ],
+          "type": "string"
+        },
+        "value1": {
+          "description": "CONFIRM THE FOLLOWING: First value for the given generic command (unchecked). For PanTilt, this is the pan (bearing) in degrees (where 0 is true north), For Volume, this is the volume level, For Mute, this is 0 (un-mute) or 1 (mute), For Scene, this is 1 thru 6 to represent the scene (the video client)",
+          "format": "double",
+          "type": "number"
+        },
+        "value2": {
+          "description": "CONFIRM THE FOLLOWING: Second value for the given generic command (unchecked). For PanTilt, this is the tilt in degrees, where 0 points down and 180 points up",
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "CameraCommandNudgeRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "down": {
+          "description": "[0 to 90]:Move camera down this many degrees",
+          "format": "int32",
+          "type": "integer"
+        },
+        "left": {
+          "description": "[0 to 90]:Move camera left this many degrees",
+          "format": "int32",
+          "type": "integer"
+        },
+        "right": {
+          "description": "[0 to 90]:Move camera right this many degrees",
+          "format": "int32",
+          "type": "integer"
+        },
+        "up": {
+          "description": "[0 to 90]:Move camera up this many degrees",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "CameraCommandPanTiltZoomRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "pan": {
+          "description": "[0.0 to 359.99]: camera's bearing direction in degrees (0 degrees is true north)",
+          "format": "double",
+          "type": "number"
+        },
+        "tilt": {
+          "description": "[0.0 to 180.0]: camera's tilt in degrees (90 degrees at the horizontal, 0 degrees is fully tilted down)",
+          "format": "double",
+          "type": "number"
+        },
+        "zoom": {
+          "description": "[0.0 to 100.0]: camera's zoom percentage",
+          "format": "double",
+          "type": "number"
+        }
+      }
+    },
+    "CameraCommandPelcoRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "command1": {
+          "description": "Pelco Command 1",
+          "format": "int32",
+          "type": "integer"
+        },
+        "command2": {
+          "description": "Pelco Command 2",
+          "format": "int32",
+          "type": "integer"
+        },
+        "data1": {
+          "description": "Data for Pelco Command 1",
+          "format": "int32",
+          "type": "integer"
+        },
+        "data2": {
+          "description": "Data for Pelco Command 2",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "CameraCommandPositionRestDto": {
+      "description": "dto description not used",
+      "properties": {
+        "gotoPosition": {
+          "$ref": "#/definitions/GeoPosRestDto",
+          "description": "Location in which to point the camera"
+        }
+      }
+    },
+    "CameraRestDto": {
+      "description": "Real-time Camera status",
+      "properties": {
+        "cameraType": {
+          "description": "Type of camera",
+          "enum": [
+            "Unknown",
+            "CohuLegacy",
+            "Pelco",
+            "Vumii",
+            "Bosch",
+            "Its",
+            "ItsLr",
+            "Quickset",
+            "QuickIr",
+            "CarbideLr",
+            "CarbideIr",
+            "MiniM3g",
+            "Emx",
+            "Flir",
+            "Sirvss",
+            "Navigator",
+            "TspComm",
+            "Gvs1000",
+            "Eoss500",
+            "Nexus",
+            "Lrad",
+            "Visca",
+            "Wavcam",
+            "IcxDefendIr",
+            "DwcPtz39x",
+            "IpPelco",
+            "Cohu",
+            "Nighthawk",
+            "VideoOnly",
+            "Camera25",
+            "Camera26",
+            "Camera27",
+            "Camera28",
+            "Camera29",
+            "Camera30",
+            "Camera31",
+            "Camera32"
+          ],
+          "type": "string"
+        },
+        "fieldOfView": {
+          "$ref": "#/definitions/BearingFieldOfViewRestDto",
+          "description": "viewable presentation area measured by width and range"
+        },
+        "id": {
+          "description": "the resource identifier; the camera id",
+          "format": "byte",
+          "type": "string"
+        },
+        "isAutoTiltOn": {
+          "description": "[false, true]: boolean representing whether the auto-tilt feature is on",
+          "type": "boolean"
+        },
+        "isPowerOn": {
+          "description": "[false, true]: boolean representing the state of the camera's power; not shown if server is offline (value is unknown and not applicable)",
+          "type": "boolean"
+        },
+        "isServerOffline": {
+          "description": "[true]: boolean representing if the camera server is offline (else the field is not shown)",
+          "type": "boolean"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria,<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'rel/track' link references the track this camera is following, if any.",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "given name of this camera",
+          "type": "string"
+        },
+        "pan": {
+          "description": "[0.0 to 359.99]: camera's bearing direction in degrees (0 degrees is true north)",
+          "format": "float",
+          "type": "number"
+        },
+        "position": {
+          "$ref": "#/definitions/GeoPosRestDto",
+          "description": "current location of this camera"
+        },
+        "tilt": {
+          "description": "[0.0 to 180.0]: camera's tilt in degrees (90 degrees at the horizontal, 0 degrees is fully tilted down)",
+          "format": "float",
+          "type": "number"
+        },
+        "trackingStatus": {
+          "description": "tracking status of the camera",
+          "enum": [
+            "NotTracking",
+            "AcquiringTrack",
+            "Steady",
+            "Coasting"
+          ],
+          "type": "string"
+        },
+        "zoom": {
+          "description": "[0.0 to 100.0]: camera's zoom percentage",
+          "format": "float",
+          "type": "number"
+        }
+      }
+    },
+    "CamerasRestDto": {
+      "description": "Container for multiple Camera statuses",
+      "properties": {
+        "items": {
+          "description": "An array of Cameras matching the query criteria",
+          "items": {
+            "$ref": "#/definitions/CameraRestDto"
+          },
+          "type": "array"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size",
+          "format": "int64",
+          "type": "integer"
+        }
+      }
+    },
+    "ErrorRestDto": {
+      "properties": {
+        "code": {
+          "description": "HTTP Status Code",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "summary description of the error",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL resulting in this error message",
+          "type": "string"
+        }
+      }
+    },
+    "GeoPosRestDto": {
+      "description": "Geophysical location",
+      "properties": {
+        "altitude": {
+          "description": "Height of the object above sea level (meters)",
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "description": "[-90 to +90]: Latitude of the object (Decimal Degrees, North Positive/South Negative)",
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "[-180 to +180]: Longitude of the object (Decimal Degrees, East Positive/West Negative)",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ResponseBodyExceptionInfo": {
+      "description": "description not used ",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorRestDto",
+          "description": "error details"
+        }
+      }
+    },
+    "Void": {}
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/cameras": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Returns all camera statuses in the system, thereby providing the means to be aware of all cameras in the system. Note that the returned array of cameras is not paged.",
+        "operationId": "getCameras",
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/CamerasRestDto"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Cameras status"
+      }
+    },
+    "/cameras/{id}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Get the status for a specific camera",
+        "operationId": "getCamera",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/CameraRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Camera status"
+      }
+    },
+    "/cameras/{id}/assignTrack": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Assign the camera to a track by changing the 'trackToAssign' field.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "commandAssignTrack",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Track to assign to the camera.<br>For example:<br>{  \"trackToAssign\": \"COM0100002\"}",
+            "in": "body",
+            "name": "assignedTrack",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CameraCommandAssignTrackRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Assign Track to Camera"
+      }
+    },
+    "/cameras/{id}/deassignTrack": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "This command will deassign any tracks which might currently be assigned to a camera",
+        "operationId": "commandDeassignTrack",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Deassign Track from Camera"
+      }
+    },
+    "/cameras/{id}/genericCommand": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Command the camera via a 'Generic' command.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "commandGenericCommand",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Generic Command data to command the camera.<br>For example:<br>{ \"command\" : \"PanTilt\", \"value1\" : 7.75, \"value2\" : 89.5 }",
+            "in": "body",
+            "name": "genericCommand",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CameraCommandGenericRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Apply a Generic command"
+      }
+    },
+    "/cameras/{id}/gotoPosition": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Supply the latitude and longitude in which to point the camera.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "commandGoToPosition",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Latitude and longitude in which to point the camera.<br>For example:<br>{ \"gotoPosition\": {  \"latitude\":33,   \"longitude\":-180} }",
+            "in": "body",
+            "name": "gotoPosition",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CameraCommandPositionRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Point Camera to a Location"
+      }
+    },
+    "/cameras/{id}/image": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Retrieves the current Camera Image as a jpeg",
+        "operationId": "getCameraImage",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Optional user-chosen value to provide a 'context' for the request.<br>This serves two purposes:<br>First, to ensure the request goes to the server instead of being cached at the browser, and,<br>Secondly, to correlate the request with the return (this information is in the 'location' of the header).<br>This value is otherwise ignored by the server and can be any value.",
+            "in": "query",
+            "name": "cacheId",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "*/*"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "items": {
+                "format": "int32",
+                "type": "integer"
+              },
+              "type": "array"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Camera Image resource found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "424": {
+            "description": "Failed Dependency; Camera is not generating images",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Camera Image"
+      }
+    },
+    "/cameras/{id}/nudge": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "'Nudge' the camera's direction a few degrees in any combination of four directions.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "commandNudge",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Direction and degrees in which to 'nudge' the camera.<br>For example:<br>{ \"up\": 1, \"left\":2 }",
+            "in": "body",
+            "name": "nudge",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CameraCommandNudgeRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Nudge the Camera"
+      }
+    },
+    "/cameras/{id}/panTiltZoom": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Perform any combination of panning, tilting, or zooming the camera<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "commandPanTiltZoom",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Parameters to pan, tilt, or zoom the camera.<br>For example:<br>{  \"pan\": 90}",
+            "in": "body",
+            "name": "panTiltZoom",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CameraCommandPanTiltZoomRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Pan, tilt, and zoom the Camera"
+      }
+    },
+    "/cameras/{id}/pelcoCommand": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Command the camera via a 'Pelco' command.<br>See the \"Parameters\" section, \"Model\" sub-section for this items data name, type, and acceptable value.",
+        "operationId": "commandPelcoCommand",
+        "parameters": [
+          {
+            "description": "the camera id",
+            "format": "byte",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "description": "Pelco Command.<br>For example:<br>{ \"command1\" : 3, \"command2\" : 5, \"data1\" : 7, \"data2\" : 0 }",
+            "in": "body",
+            "name": "pelcoCommand",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CameraCommandPelcoRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such camera found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Apply a Pelco command"
+      }
+    }
+  },
+  "swagger": "2.0"
+}

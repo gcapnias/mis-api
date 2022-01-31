@@ -1,0 +1,1285 @@
+{
+  "basePath": "/api",
+  "definitions": {
+    "ErrorRestDto": {
+      "properties": {
+        "code": {
+          "description": "HTTP Status Code",
+          "format": "int32",
+          "type": "integer"
+        },
+        "message": {
+          "description": "summary description of the error",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL resulting in this error message",
+          "type": "string"
+        }
+      }
+    },
+    "F21x7StatusTypeRestDto": {
+      "description": "Readback status for the 21x7 radar",
+      "properties": {
+        "magnetronHeaterStatus": {
+          "description": "magnetron heater status reported from the radar in volts",
+          "format": "double",
+          "type": "number"
+        },
+        "minus12vStatus": {
+          "description": "-12 voltage status reported from the radar in volts",
+          "format": "double",
+          "type": "number"
+        },
+        "plus12vStatus": {
+          "description": "+12 voltage status reported from the radar in volts",
+          "format": "double",
+          "type": "number"
+        },
+        "plus32vStatus": {
+          "description": "+32 voltage status reported from the radar in volts",
+          "format": "double",
+          "type": "number"
+        },
+        "plus5vStatus": {
+          "description": "+5 voltage status reported from the radar in volts",
+          "format": "double",
+          "type": "number"
+        },
+        "radarTemperature": {
+          "description": "temperature reported from the radar in degrees celsius",
+          "format": "double",
+          "type": "number"
+        },
+        "transmitHvStatus": {
+          "description": "transmit high voltage status reported from the radar in volts",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "radarTemperature",
+        "transmitHvStatus",
+        "plus32vStatus",
+        "plus12vStatus",
+        "minus12vStatus",
+        "plus5vStatus",
+        "magnetronHeaterStatus"
+      ]
+    },
+    "FilterRestDto": {
+      "properties": {
+        "clutterMode": {
+          "description": "clutter mode (typically Manual, Semi-Auto, or Full-Auto)",
+          "enum": [
+            "Manual",
+            "Semi-Auto",
+            "Full-Auto",
+            "MTD",
+            "Transceiver"
+          ],
+          "type": "string"
+        },
+        "gainControl": {
+          "description": "[0-100]: gain control",
+          "format": "int32",
+          "type": "integer"
+        },
+        "irControl": {
+          "description": "interference rejection control",
+          "enum": [
+            "Off",
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "type": "string"
+        },
+        "rainControl": {
+          "description": "[0-100]: control for rain clutter",
+          "format": "int32",
+          "type": "integer"
+        },
+        "seaControl": {
+          "description": "[0-100]: control for sea clutter",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "GeoPosRestDto": {
+      "description": "Geophysical location",
+      "properties": {
+        "altitude": {
+          "description": "Height of the object above sea level (meters)",
+          "format": "double",
+          "type": "number"
+        },
+        "latitude": {
+          "description": "[-90 to +90]: Latitude of the object (Decimal Degrees, North Positive/South Negative)",
+          "format": "double",
+          "type": "number"
+        },
+        "longitude": {
+          "description": "[-180 to +180]: Longitude of the object (Decimal Degrees, East Positive/West Negative)",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ]
+    },
+    "KelvinHughesRadarInfoRestDto": {
+      "description": "Radar Info for Kelvin Hughes type Radars",
+      "properties": {
+        "isDopplerSharpEye": {
+          "description": "is Doppler SharpEye",
+          "type": "boolean"
+        },
+        "radarType": {
+          "description": "type of radar within the family",
+          "format": "byte",
+          "type": "string"
+        }
+      },
+      "required": [
+        "radarType",
+        "isDopplerSharpEye"
+      ]
+    },
+    "Link": {
+      "properties": {
+        "href": {
+          "type": "string"
+        },
+        "rel": {
+          "type": "string"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "RadarControlRestDto": {
+      "properties": {
+        "clutterMode": {
+          "description": "clutter mode (typically Manual, Semi-Auto, or Full-Auto)",
+          "enum": [
+            "Manual",
+            "Semi-Auto",
+            "Full-Auto",
+            "MTD",
+            "Transceiver",
+            "Other"
+          ],
+          "type": "string"
+        },
+        "controller": {
+          "description": "ip address of the Radar's primary controller",
+          "type": "string"
+        },
+        "controllerName": {
+          "description": "name of the station which has control. If it is the 'MIS' station, then the loginId of the user is typically also shown",
+          "type": "string"
+        },
+        "gainControl": {
+          "description": "[0-100]: gain control",
+          "format": "int32",
+          "type": "integer"
+        },
+        "irControl": {
+          "description": "interference rejection control",
+          "enum": [
+            "Off",
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "type": "string"
+        },
+        "isAdjunctRp": {
+          "description": "[false, true] is the Radar an 'Adjunct' RP (can only change a limited set of fields)",
+          "type": "boolean"
+        },
+        "isNotUpdating": {
+          "description": "[true]: boolean representing if this resource is no longer being updated or seen in the system and will soon no longer be accessible from the API",
+          "type": "boolean"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "radarMode": {
+          "description": "pulse mode of the radar",
+          "enum": [
+            "Auto",
+            "Manual",
+            "Short-1",
+            "Short-2",
+            "Medium-1",
+            "Medium-2",
+            "Long-1",
+            "Long-2",
+            "Short-3",
+            "Medium-3",
+            "Long-3"
+          ],
+          "type": "string"
+        },
+        "radarState": {
+          "description": "radar state for this radar",
+          "enum": [
+            "Warmup",
+            "Off",
+            "Standby",
+            "Radiate",
+            "Rotate",
+            "RotateRadiate",
+            "SafetyStandby",
+            "RadarControlFailure",
+            "Unknown"
+          ],
+          "type": "string"
+        },
+        "rainControl": {
+          "description": "[0-100]: control for rain clutter",
+          "format": "int32",
+          "type": "integer"
+        },
+        "rangeScale": {
+          "description": "[24 or 48]: range scale setting (applies only if Kelvin Hughes type of radar)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "rpNum": {
+          "description": "[1-64]: RP Number of the radar",
+          "format": "int32",
+          "type": "integer"
+        },
+        "seaControl": {
+          "description": "[0-100]: control for sea clutter",
+          "format": "int32",
+          "type": "integer"
+        },
+        "termaProfile": {
+          "description": "[0-15]: Terma Profile setting for the radar. (Not shown if not a Terma Radar or if the profile is not set or if the SSR system does not know the profile)",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "links",
+        "rpNum",
+        "radarMode"
+      ]
+    },
+    "RadarDetailRestDto": {
+      "description": "Detail for the Radar",
+      "properties": {
+        "f21x7Status": {
+          "$ref": "#/definitions/F21x7StatusTypeRestDto",
+          "description": "status values if a f21x7 radar. Available with expand=detail"
+        },
+        "id": {
+          "description": "[1-64]: the resource identifier; the radar id (the Radar Processor unit number)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "isAcProtectionPsActive": {
+          "description": "is the AC protection power supply active. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isAcProtectionPsPowered": {
+          "description": "is the AC protection power supply powered. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isAutotuned": {
+          "description": "is the radar being auto tuned as opposed to manually tuned. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isHvPsActive": {
+          "description": "is the High Voltage Power Supply active. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isHvPsPowered": {
+          "description": "is the High Voltage Power Supply powered. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isLvPsActive": {
+          "description": "is the Low Voltage Power Supply active. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isLvPsPowered": {
+          "description": "is the Low Voltage Power Supply powered. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isMagnetronPowered": {
+          "description": "is magnetron power provided. Not available for all Radars (e.g., not available for Terma Radars). Available with expand=detail",
+          "type": "boolean"
+        },
+        "isMotorPowered": {
+          "description": "is power provided to the motor. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isMotorTurning": {
+          "description": "is radar's readback status saying motor is turning. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isMotorTurningCommanded": {
+          "description": "is motor commanded to turn. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isPerformanceMonitorActivated": {
+          "description": "is the performance monitor activated. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isRtModulePowered": {
+          "description": "is there power to the RT module. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isRtPowered": {
+          "description": "is the RT powered",
+          "type": "boolean"
+        },
+        "isSignalBearingGeneratorPowered": {
+          "description": "is the signal bearing generator powered. Available with expand=detail",
+          "type": "boolean"
+        },
+        "isTransmitTriggerActive": {
+          "description": "is the transmit trigger active. Available with expand=detail",
+          "type": "boolean"
+        },
+        "kelvinHughesRadarInfo": {
+          "$ref": "#/definitions/KelvinHughesRadarInfoRestDto",
+          "description": "information for Kelvin Hughes family of radars. Available with expand=detail"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "magnetronCurrent": {
+          "description": "magnetron current value sensed by the radar. Not available for all Radars (e.g., not available for Terma Radars). Available with expand=detail",
+          "format": "float",
+          "type": "number"
+        },
+        "mainBangSuppressLevel": {
+          "description": "main bang suppression level sensed by the radar. Available with expand=detail",
+          "format": "float",
+          "type": "number"
+        },
+        "mainBangSuppressTiming": {
+          "description": "main bang timing level sensed by the radar. Available with expand=detail",
+          "format": "float",
+          "type": "number"
+        },
+        "micCurrent": {
+          "description": "MIC current value sensed by the radar. Available with expand=detail",
+          "format": "float",
+          "type": "number"
+        },
+        "orderedTuneVoltage": {
+          "description": "ordered voltage sent to the radar which controls the tune of the radar's receiver. Available with expand=detail",
+          "format": "float",
+          "type": "number"
+        },
+        "rfCoarseTune": {
+          "description": "RF coarse value used to generate the ordered voltage. Available with expand=detail",
+          "format": "int32",
+          "type": "integer"
+        },
+        "rfFineTune": {
+          "description": "RF fine value used to generate the ordered voltage. Available with expand=detail",
+          "format": "int32",
+          "type": "integer"
+        },
+        "tuneIndicator": {
+          "description": "the RF Tune readback value, it indicates how well the receiver is tuned. A value <= 1.0 is badly tuned or there is something wrong with the radar system and <= 1.4 is poorly tuned, otherwise it is considered acceptable. Available with expand=detail",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "required": [
+        "links",
+        "rfFineTune",
+        "rfCoarseTune",
+        "orderedTuneVoltage",
+        "tuneIndicator",
+        "magnetronCurrent",
+        "micCurrent",
+        "mainBangSuppressLevel",
+        "mainBangSuppressTiming",
+        "isRtPowered",
+        "isAutotuned",
+        "isPerformanceMonitorActivated",
+        "isMotorPowered",
+        "isMotorTurningCommanded",
+        "isMotorTurning",
+        "isRtModulePowered",
+        "isMagnetronPowered",
+        "isTransmitTriggerActive",
+        "isSignalBearingGeneratorPowered",
+        "isAcProtectionPsActive",
+        "isLvPsPowered",
+        "isHvPsPowered",
+        "isLvPsActive",
+        "isHvPsActive",
+        "isAcProtectionPsPowered",
+        "f21x7Status",
+        "kelvinHughesRadarInfo"
+      ]
+    },
+    "RadarModeRestDto": {
+      "properties": {
+        "radarMode": {
+          "description": "pulse mode of the radar. Please note that this can NOT be set if the Radar is a slave RP",
+          "enum": [
+            "Auto",
+            "Manual",
+            "Short-1",
+            "Short-2",
+            "Medium-1",
+            "Medium-2",
+            "Long-1",
+            "Long-2",
+            "Short-3",
+            "Medium-3",
+            "Long-3"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "RadarRestDto": {
+      "properties": {
+        "antennaRpm": {
+          "description": "measured RPM value of the radar",
+          "format": "float",
+          "type": "number"
+        },
+        "control": {
+          "$ref": "#/definitions/RadarControlRestDto",
+          "description": "control settings for the radar"
+        },
+        "detail": {
+          "$ref": "#/definitions/RadarDetailRestDto",
+          "description": "details of the radar"
+        },
+        "id": {
+          "description": "[1-64]: the resource identifier; the radar id (the Radar Processor unit number)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "isNotUpdating": {
+          "description": "[true]: boolean representing if this resource is no longer being updated or seen in the system and will soon no longer be accessible from the API",
+          "type": "boolean"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "position": {
+          "$ref": "#/definitions/GeoPosRestDto",
+          "description": "Location of the Radar"
+        },
+        "prf": {
+          "description": "current PRF (Pulse Repetition Frequency) of the radar",
+          "format": "int32",
+          "type": "integer"
+        },
+        "pulseWidth": {
+          "description": "pulse width of a pulsed magnetron radar in nanoseconds",
+          "format": "int32",
+          "type": "integer"
+        },
+        "radarFamily": {
+          "description": "type of radar (shown if it is in the set of given possible values)",
+          "enum": [
+            "Manta",
+            "SharpEyeS",
+            "SharpEyeX",
+            "Furuno",
+            "Terma",
+            "BME",
+            "Pahtfinder",
+            "GEM",
+            "Simrad"
+          ],
+          "type": "string"
+        },
+        "radarFullName": {
+          "description": "RP Station Name followed by the Radar Name as in 'RP Station X:Radar A'",
+          "type": "string"
+        },
+        "transmitFrequency": {
+          "description": "transmit frequency of a solid state radar in kHz",
+          "format": "double",
+          "type": "number"
+        },
+        "warmupCountdown": {
+          "description": "time in seconds until the radar is warmed and in Standby Mode. A -1 indicates the countdown is not active",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "links",
+        "control",
+        "antennaRpm",
+        "warmupCountdown",
+        "prf",
+        "detail",
+        "isNotUpdating",
+        "radarFamily",
+        "pulseWidth",
+        "transmitFrequency"
+      ]
+    },
+    "RadarStateRestDto": {
+      "properties": {
+        "radarState": {
+          "description": "radar state for this radar. Please note that this can NOT be set if the Radar is a slave RP",
+          "enum": [
+            "Off",
+            "Standby",
+            "Radiate",
+            "Rotate",
+            "RotateRadiate"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "RadarTermaBiteMRestDto": {
+      "properties": {
+        "description": {
+          "description": "SSR's Radar Processor generated description of the meaning of the type and id",
+          "type": "string"
+        },
+        "error_or_warn_value": {
+          "description": "Terma value of an error or warning",
+          "format": "int32",
+          "type": "integer"
+        },
+        "float_value": {
+          "description": "Terma value provided if data is of float type",
+          "format": "float",
+          "type": "number"
+        },
+        "id": {
+          "description": "Terma id of the BITE data",
+          "format": "int32",
+          "type": "integer"
+        },
+        "rp_time": {
+          "description": "SSR's Radar Processor timestamp of when received the BITE data",
+          "type": "string"
+        },
+        "terma_time": {
+          "description": "Terma provided timestamp when provided",
+          "type": "string"
+        },
+        "type": {
+          "description": "Terma type of BITE data. 'UNKNOWN' is reported if it's an unrecognized value",
+          "enum": [
+            "FUNCTION",
+            "FLOAT",
+            "SHORT",
+            "USHORT",
+            "CHAR",
+            "UCHAR",
+            "TIME",
+            "BITE_MEASUREMENT",
+            "BITE_MODULE_STATUS",
+            "UNKNOWN"
+          ],
+          "type": "string"
+        },
+        "value": {
+          "description": "Terma value provided if data is of integer type",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "RadarTermaBiteMsRestDto": {
+      "description": "BITE Measurements for a Terma Radar",
+      "properties": {
+        "id": {
+          "description": "[1-64]: the resource identifier; the radar id (the Radar Processor unit number)",
+          "format": "int32",
+          "type": "integer"
+        },
+        "items": {
+          "description": "BITE (Built In Test Measurements) data",
+          "items": {
+            "$ref": "#/definitions/RadarTermaBiteMRestDto"
+          },
+          "type": "array"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "items",
+        "links"
+      ]
+    },
+    "RadarsRestDto": {
+      "description": "Container for multiple Radar Statuses",
+      "properties": {
+        "items": {
+          "description": "An array of Radar Statuses matching the query criteria",
+          "items": {
+            "$ref": "#/definitions/RadarRestDto"
+          },
+          "type": "array"
+        },
+        "links": {
+          "description": "*method=GET*Provides link relations as URLs using the REST 'hateoas' convention (for REST delivered data).<br>&nbsp;&nbsp;&nbsp;&nbsp;The 'self' link references this rest object, including any specified query criteria",
+          "items": {
+            "$ref": "#/definitions/Link"
+          },
+          "type": "array"
+        },
+        "totalItems": {
+          "description": "Total number of elements matching the query filter and not limited by page size",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "links",
+        "items",
+        "totalItems"
+      ]
+    },
+    "RangeScaleRestDto": {
+      "properties": {
+        "rangeScale": {
+          "description": "[24 or 48]: range scale setting (applies only if Kelvin Hughes type of radar)",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "ResponseBodyExceptionInfo": {
+      "description": "description not used ",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/ErrorRestDto",
+          "description": "error details"
+        }
+      }
+    },
+    "TermaProfileRestDto": {
+      "properties": {
+        "termaProfile": {
+          "description": "[0-15]: Terma Profile setting for the radar. (Not shown if not a Terma Radar or if the profile is not set or if the SSR system does not know the profile)",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "Void": {}
+  },
+  "info": {
+    "version": "1.0"
+  },
+  "paths": {
+    "/radars": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Requests Radar Data for all Radars in the system. (No paging or querying available).",
+        "operationId": "getRadarDatas",
+        "parameters": [
+          {
+            "description": "Provides extra data. if 'control' is requested then control settings are provided. if 'detail' is requested then extra detail of the resource is provided. Any combination of these can be given.<br>Values: [control, detail]",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/RadarsRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Radars Status"
+      }
+    },
+    "/radars/{id}": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Requests the Radar Data for the specified Radar",
+        "operationId": "getRadarData",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Provides extra data. if 'control' is requested then control settings are provided. if 'detail' is requested then extra detail of the resource is provided. Any combination of these can be given.<br>Values: [control, detail]",
+            "in": "query",
+            "name": "expand",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/RadarRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Radar Data"
+      }
+    },
+    "/radars/{id}/control": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Requests the Radar Control settings for the specified Radar",
+        "operationId": "getRadarControl",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/RadarControlRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Radar Control Settings"
+      }
+    },
+    "/radars/{id}/control/filter": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Updates Radar Filtering controls. Please note not all combination of settings are allowed as further described below. Also, fields which are not provided use the current system setting.",
+        "operationId": "updateFilter",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Radar Filter settings",
+            "in": "body",
+            "name": "filter",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FilterRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Provides Control of Radar Filtering"
+      }
+    },
+    "/radars/{id}/control/mode": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Updates Radar Mode",
+        "operationId": "updateRadarMode",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Radar mode settings",
+            "in": "body",
+            "name": "radarMode",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RadarModeRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Provides Control of Radar Mode"
+      }
+    },
+    "/radars/{id}/control/rangeScale": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Updates Radar Range Scale",
+        "operationId": "updateRangeScale",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Range Scale Setting",
+            "in": "body",
+            "name": "rangeScale",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RangeScaleRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Provides Control of Range Scale"
+      }
+    },
+    "/radars/{id}/control/state": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Updates Radar State",
+        "operationId": "updateRadarState",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Radar state settings",
+            "in": "body",
+            "name": "radarState",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RadarStateRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Provides Control of Radar State"
+      }
+    },
+    "/radars/{id}/control/termaProfile": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Updates Terma Profile",
+        "operationId": "updateTermaProfile",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Terma Profile",
+            "in": "body",
+            "name": "termaProfile",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TermaProfileRestDto"
+            }
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "No response was specified"
+          },
+          "202": {
+            "description": "Accepted (the request to update the resource has been accepted but the resource itself is not yet necessarily updated.) "
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Provides control of the Terma Profile"
+      }
+    },
+    "/radars/{id}/detail": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Requests the Radar Detail data for the specified Radar",
+        "operationId": "getRadarDetail",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/RadarDetailRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Radar Detail"
+      }
+    },
+    "/radars/{id}/terma/BITE/measurements": {
+      "get": {
+        "consumes": [
+          "application/json"
+        ],
+        "deprecated": false,
+        "description": "Provides all Terma BITE Measurements (Status, Errors, and Warnings) for a Terma Radar. No action is required for this data to be made available. <br/><br/><em>Important Note on Time Zones:</em><br/>For correct presentation, the MIS and the system interfacing with the Terma (the Radar Processor) require their system time to be set to the same Time Zone. If not, then the presented data will be offset in the same way the Time Zones are. <br/><br/>Note on using updateSince<br/>The recommended approach is to simply base the updateSince query value relative to the time of the data received and presented. This will overcome any differences in system time or Time Zones between the client, MIS, and the system supplying the Terma BITE data. <br/>E.g., if presented time of data received is 2019-03-14T14:55:00.050Z, then using a query of updateSince=2019-03-14T14:55:00.050Z will get all data since that time. <br/><br/>Note on Amount of Data Available<br/> Terma BITE data is constantly being received. MIS stores a limited amount of this Terma BITE data. Requesting data every 5 seconds should be sufficient to get all data since the last request without missing any. ",
+        "operationId": "getRadarTermaBiteMeasurements",
+        "parameters": [
+          {
+            "description": "the radar id (the Radar Processor unit number)",
+            "format": "int32",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Returns Terma BITE measurements that have been updated since (greater than) the rp_time.<br>This is useful for clients that are continually polling the server.<br>See the 'Note on using updateSince' above in the 'Implementation Notes' section. <br><br>&nbsp;&nbsp;&nbsp;&nbsp;Example Value: 2019-03-14T14:55:00.050Z specifies a year-month-day followed by 24-hour hours:minutes:seconds.milliseconds in GMT time<br><br>Note that the size query is ignored when this query is given; all matched items will be returned.",
+            "in": "query",
+            "name": "updateSince",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "How many entries to retrieve. Ignored if updateSince is given. Defaults to 20",
+            "format": "int32",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. See the 'Response Class' section above for the description of the data.",
+            "schema": {
+              "$ref": "#/definitions/RadarTermaBiteMsRestDto"
+            }
+          },
+          "400": {
+            "description": "Bad Request. Typically invalid or incomplete parameter(s). See the 'message' property for detail of the error.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "401": {
+            "description": "Insufficient authorization. Basic Authentication is missing, invalid, or permissions are insufficient for the operation.",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          },
+          "404": {
+            "description": "No such Radar with Radar ID found or Radar has no Terma Data",
+            "schema": {
+              "$ref": "#/definitions/ResponseBodyExceptionInfo"
+            }
+          }
+        },
+        "summary": "Get Terma Radar BITE measurements"
+      }
+    }
+  },
+  "swagger": "2.0"
+}
